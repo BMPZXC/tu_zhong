@@ -31,7 +31,7 @@ func _physics_process(delta: float) -> void:
 		落地_等待+=delta
 		if 落地_等待>0.4 and 敌人:
 			落地_等待=0
-			velocity=Vector2(50,-50)*2
+			velocity+=Vector2(50,-50)*2
 			velocity.x=velocity.x* sign(敌人.global_position.x-global_position.x)
 	else :
 		velocity.y+=20
@@ -49,14 +49,17 @@ func _on_死亡() -> void:
 collision_layer = 4
 collision_mask = 5
 script = SubResource("GDScript_807mj")
+"质量" = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_807mj")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." node_paths=PackedStringArray("a")]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_6oee2")
+a = NodePath("..")
+"击飞强度" = 3.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_6oee2")

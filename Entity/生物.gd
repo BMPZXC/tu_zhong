@@ -8,10 +8,14 @@ signal 生命_
 		生命=a
 		生命_.emit()
 ##用于击退
-@export var 质量:int=1  
+@export var 质量:float=1  
 
 signal 死亡
-func 受击():
+signal 受击_攻击方(生物)
+func 受击(a:生物):
 	生命-=1
 	if 生命<=0:
 		死亡.emit()
+	else :
+		受击_攻击方.emit(a)
+		

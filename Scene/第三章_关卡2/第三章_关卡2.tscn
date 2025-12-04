@@ -11,7 +11,6 @@ script/source = "extends Control
 @onready var text_box: TextBox = $TextBox
 func _ready() -> void:
 	声音.更换音乐(声音.剧情3)
-	await  get_tree().create_timer(1).timeout
 	entity.限制相机移动($TextureRect)
 	await entity.镜头至屏幕($TextureRect)
 	剧情_1()

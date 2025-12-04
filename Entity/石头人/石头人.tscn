@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://bu5x2qje805pe"]
+[gd_scene load_steps=62 format=3 uid="uid://bu5x2qje805pe"]
 
 [ext_resource type="Script" uid="uid://iubl2fg1wf6e" path="res://Entity/攻击区.gd" id="3_ful33"]
 [ext_resource type="Texture2D" uid="uid://b0w5c4g6obq48" path="res://Entity/石头人/Golem_1_attack.png" id="4_ful33"]
@@ -11,7 +11,7 @@
 [sub_resource type="GDScript" id="GDScript_807mj"]
 script/source = "extends 生物
 @export var 攻击间隔:float=2
-@export var 敌人:CharacterBody2D
+@export var 敌人:Player_2
 func _ready() -> void:
 	if Engine.is_editor_hint():set_process(false)
 	
@@ -28,20 +28,23 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
 var 图片_方向:=1
+var 等待=false
 func 靠近(delta: float):
 	下砸_冷却-=delta
 	var 水平差值=敌人.global_position.x-global_position.x
 	if 水平差值*图片_方向<-1:
 		scale.x=-scale.x
 		图片_方向=-图片_方向
-	if abs(水平差值)>30:
+	if not 等待:
 		velocity.x=velocity.x +(30*sign(水平差值)-velocity.x)*10*delta
 		animated_sprite_2d.play(\"w\")
+		if abs(水平差值)<15:等待=true
 	else :
 		velocity.x=velocity.x-velocity.x*10*delta
 		animated_sprite_2d.play(\"i\")
-		if 下砸_冷却<=0:
+		if 下砸_冷却<=0 and 敌人.get_collision_layer_value(2):
 			下砸()
+		if abs(水平差值)>30:等待=false
 var 下砸_冷却=1
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 func 下砸():
@@ -56,7 +59,8 @@ func 空模式(_delta: float):
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 func _on_health_component_died() -> void:
 	模式=空模式
-	set_collision_layer_value(1<<2,false)
+	set_collision_layer_value(3,false)
+	set_collision_layer_value(5,false)
 	animated_sprite_2d.play(\"d\")
 	await get_tree().physics_frame
 	await animated_sprite_2d.animation_finished
@@ -74,6 +78,9 @@ size = Vector2(39, 37)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uafib"]
 size = Vector2(74, 12)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sdpnq"]
+size = Vector2(28, 35)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bgo4j"]
 atlas = ExtResource("4_ful33")
@@ -459,14 +466,14 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("DamageComponent/CollisionShape2D:disabled")
+tracks/2/path = NodePath("DamageComponent:monitoring")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_kd53i"]
@@ -498,14 +505,14 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("DamageComponent/CollisionShape2D:disabled")
+tracks/2/path = NodePath("DamageComponent:monitoring")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.6064936, 0.8480176),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0.6333333, 0.76666665),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true, false, true]
+"values": [true, false]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hyl28"]
@@ -519,20 +526,27 @@ collision_layer = 20
 collision_mask = 17
 script = SubResource("GDScript_807mj")
 "生命_上线" = 8
+"质量" = 5.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1.5, 13.5)
 shape = SubResource("RectangleShape2D_807mj")
 
-[node name="DamageComponent" type="Area2D" parent="."]
+[node name="DamageComponent" type="Area2D" parent="." node_paths=PackedStringArray("a")]
 collision_layer = 0
 collision_mask = 2
+monitoring = false
 script = ExtResource("3_ful33")
+a = NodePath("..")
+"击飞强度" = 2.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageComponent"]
 position = Vector2(8, 26)
 shape = SubResource("RectangleShape2D_uafib")
-disabled = true
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="DamageComponent"]
+position = Vector2(4, 14.5)
+shape = SubResource("RectangleShape2D_sdpnq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_gsd7u")

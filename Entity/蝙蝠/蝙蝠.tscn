@@ -33,7 +33,7 @@ func 靠近(delta: float):
 	else :
 		velocity=velocity+-velocity*10*delta
 		animated_sprite_2d.play(\"i\")
-		if 攻击_冷却<=0:
+		if 攻击_冷却<=0  and 敌人.get_collision_layer_value(2):
 			冲刺(差值.normalized())
 var 攻击_冷却=1
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -60,7 +60,7 @@ func 掉落(delta: float):
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 func _on_health_component_died() -> void:
-	set_collision_layer_value(1<<2,false)
+	set_collision_layer_value(3,false)
 	模式=掉落
 	animated_sprite_2d.play(\"d\")
 	await get_tree().physics_frame
@@ -373,20 +373,22 @@ _data = {
 &"a": SubResource("Animation_kd53i")
 }
 
-[node name="蝙蝠" type="CharacterBody2D"]
+[node name="蝙蝠" type="CharacterBody2D" node_paths=PackedStringArray("敌人")]
 collision_layer = 4
 script = SubResource("GDScript_807mj")
+"敌人" = NodePath(".")
 "生命_上线" = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_807mj")
 
-[node name="DamageComponent" type="Area2D" parent="."]
+[node name="DamageComponent" type="Area2D" parent="." node_paths=PackedStringArray("a")]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("3_wj4py")
-"击飞强度" = Vector2(0, 0)
+a = NodePath("..")
+"击飞强度" = 0.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageComponent"]
 position = Vector2(0.5, 1)

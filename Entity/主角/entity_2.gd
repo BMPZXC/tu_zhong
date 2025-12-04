@@ -111,7 +111,7 @@ func _physics_process(delta: float) -> void:
 		if a*图片_方向<0:
 			scale.x=-scale.x
 			图片_方向=-图片_方向
-		velocity.x=velocity.x+(200*sign(a)-velocity.x)*delta*5
+		velocity.x=velocity.x+(100*sign(a)-velocity.x)*delta*7
 
 		if not is_on_floor():
 			velocity.y+=10
@@ -128,12 +128,12 @@ func _physics_process(delta: float) -> void:
 		模式.call(delta)
 	
 func 闪现_(_delta: float) -> void:
-	velocity=Vector2(500*图片_方向,0)
+	velocity=Vector2(400*图片_方向,0)
 	move_and_slide()
 func 金身():
-	set_collision_layer_value(1<<1,false)
+	set_collision_layer_value(2,false)
 func 金身_取消():
-	set_collision_layer_value(1<<1,true)
+	set_collision_layer_value(2,true)
 
 @onready var 鼠标右键 = $CanvasLayer/右下/鼠标右键
 var 可_闪现:bool=true

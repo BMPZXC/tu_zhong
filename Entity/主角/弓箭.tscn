@@ -5,10 +5,11 @@
 [sub_resource type="GDScript" id="GDScript_ckt3k"]
 script/source = "extends Area2D
 
-@export var 攻击力:int=1
+var a:生物
+
 func _on_body_entered(body: Node2D) -> void:
 	if body is 生物:
-		body.受击()
+		body.受击(a)
 		if not 穿透:queue_free()
 
 var 穿透=false

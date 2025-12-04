@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bwfqegaly2enf"]
+[gd_scene load_steps=16 format=3 uid="uid://bwfqegaly2enf"]
 
 [ext_resource type="Theme" uid="uid://dx3qanifd1whh" path="res://Scene/主页/主体.tres" id="1_gftoo"]
 [ext_resource type="Texture2D" uid="uid://ce7pper7gx656" path="res://Scene/主页/警告.png" id="2_gftoo"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dv1filgh2ppn8" path="res://Scene/主页/叉3.png" id="6_8fchc"]
 [ext_resource type="Texture2D" uid="uid://bldy2qws8vla8" path="res://Scene/主页/叉2.png" id="7_pcgok"]
 [ext_resource type="Texture2D" uid="uid://dk3nmtfiinx6v" path="res://Scene/主页/叉.png" id="8_575qv"]
+[ext_resource type="FontFile" uid="uid://dkbyxtetitdkq" path="res://Scene/textbox/思源黑体Medium.otf" id="9_pcgok"]
 
 [sub_resource type="GDScript" id="GDScript_gftoo"]
 script/source = "extends Control
@@ -364,6 +365,21 @@ flat = true
 layout_mode = 2
 text = "Shutdown"
 flat = true
+
+[node name="Label" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0.5019608)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -128.0
+offset_top = 57.0
+offset_right = 128.0
+offset_bottom = 186.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("9_pcgok")
+theme_override_font_sizes/font_size = 128
+text = "途中"
 
 [connection signal="pressed" from="BackGround/HBoxContainer/TextureButton3" to="." method="_on_texture_rect_3_pressed"]
 [connection signal="pressed" from="Button/StartButton" to="." method="_on_start_button_pressed"]

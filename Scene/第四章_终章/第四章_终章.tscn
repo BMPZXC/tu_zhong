@@ -17,15 +17,11 @@ script/source = "extends Control
 func _ready() -> void:
 	存档.存储_剧情进度(3)
 	声音.更换音乐(声音.剧情4)
-	await  get_tree().create_timer(1).timeout
+	
 	entity.限制相机移动($TextureRect)
 	await entity.镜头至屏幕($TextureRect)
 	特殊_1()
 	
-	#特殊_3()
-	#剧情_14()
-	#剧情_14()
-
 
 @onready var 特效_1_1: Control = $CanvasLayer/特效_1
 @onready var dialogue_label: DialogueLabel = $CanvasLayer/特效_1/DialogueLabel
@@ -165,7 +161,7 @@ A-MEN：……所以这是最后一场战斗？
 	\"\"\")
 	await text_box.结束
 	战斗_5()
-@onready var 战斗_5_1=战败ui.获取战斗场景组([$Node2D,$Node2D2],entity,剧情_6)
+@onready var 战斗_5_1=战败ui.获取战斗场景组([$Node2D,$Node2D2,$Node2D3],entity,剧情_6)
 func 战斗_5():
 	声音.更换音乐(声音.战斗3)
 	await entity.镜头至屏幕_复原()
@@ -509,7 +505,10 @@ shape = SubResource("RectangleShape2D_dpgy5")
 position = Vector2(428, -153)
 shape = SubResource("RectangleShape2D_dpgy5")
 
+[node name="Entity_2" parent="." instance=ExtResource("3_32l6c")]
+
 [node name="Node2D" type="Node2D" parent="."]
+visible = false
 
 [node name="石头人" parent="Node2D" instance=ExtResource("3_43t24")]
 position = Vector2(285, -24)
@@ -522,8 +521,6 @@ position = Vector2(-202, -118)
 
 [node name="蝙蝠2" parent="Node2D" instance=ExtResource("4_m1r2l")]
 position = Vector2(152, -97)
-
-[node name="Entity_2" parent="." instance=ExtResource("3_32l6c")]
 
 [node name="Node2D2" type="Node2D" parent="."]
 visible = false
@@ -551,6 +548,45 @@ position = Vector2(197, -124)
 
 [node name="蝙蝠4" parent="Node2D2" instance=ExtResource("4_m1r2l")]
 position = Vector2(285, 22)
+
+[node name="Node2D3" type="Node2D" parent="."]
+visible = false
+
+[node name="石头人" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(352, 1)
+
+[node name="石头人2" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(-258, 11)
+
+[node name="石头人4" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(209, 5)
+
+[node name="石头人5" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(-140, -3)
+
+[node name="蝙蝠" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(-283, 35)
+
+[node name="蝙蝠2" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(-202, -118)
+
+[node name="蝙蝠3" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(197, -124)
+
+[node name="蝙蝠4" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(285, 22)
+
+[node name="石头人3" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(137, 23)
+
+[node name="石头人6" parent="Node2D3" instance=ExtResource("3_43t24")]
+position = Vector2(-194, 25)
+
+[node name="蝙蝠5" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(-58, -209)
+
+[node name="蝙蝠6" parent="Node2D3" instance=ExtResource("4_m1r2l")]
+position = Vector2(351, -180)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2

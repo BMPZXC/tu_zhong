@@ -13,7 +13,6 @@ script/source = "extends Control
 
 func _ready() -> void:
 	声音.更换音乐(声音.剧情2)
-	await  get_tree().create_timer(1).timeout
 	玩家.限制相机移动($TextureRect)
 	await 玩家.镜头至屏幕($TextureRect)
 	剧情_1()

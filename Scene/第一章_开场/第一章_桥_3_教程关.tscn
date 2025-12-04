@@ -29,13 +29,21 @@ tile_map_data = PackedByteArray("AAAgAAcAAAAEAAgAAAAfAAcAAAACAAAAAAAeAAcAAAACAAA
 tile_set = ExtResource("1_l0dwc")
 
 [node name="Label" type="Label" parent="."]
-visible = false
-offset_left = -416.0
-offset_top = 10.0
-offset_right = 390.0
-offset_bottom = 59.0
+modulate = Color(1, 1, 1, 0.49411765)
+offset_left = -411.0
+offset_top = -25.0
+offset_right = 395.0
+offset_bottom = 24.0
 theme_override_font_sizes/font_size = 48
 text = "剑:空中连砍  弓:蓄力穿刺  盾:防反回复"
+
+[node name="Label" type="Label" parent="Label"]
+layout_mode = 0
+offset_left = 59.0
+offset_top = 63.0
+offset_right = 171.0
+offset_bottom = 80.0
+text = "(你必须命中敌人)"
 
 [node name="Entity_2" parent="." instance=ExtResource("2_k05nx")]
 
@@ -45,34 +53,42 @@ visible = false
 [node name="CharacterBody2D" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(-403, 11)
 "字" = "咿"
+"生命_上线" = 2
 
 [node name="CharacterBody2D2" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(-344, 12)
 "字" = "咿"
+"生命_上线" = 2
 
 [node name="CharacterBody2D3" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(-278, 9)
 "字" = "呀"
+"生命_上线" = 2
 
 [node name="CharacterBody2D4" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(-208, 9)
 "字" = "呀"
+"生命_上线" = 2
 
 [node name="CharacterBody2D5" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(239, 16)
 "字" = "叽"
+"生命_上线" = 2
 
 [node name="CharacterBody2D6" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(298, 17)
 "字" = "叽"
+"生命_上线" = 2
 
 [node name="CharacterBody2D7" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(364, 14)
 "字" = "喳"
+"生命_上线" = 2
 
 [node name="CharacterBody2D8" parent="冻结区" instance=ExtResource("3_io8c7")]
 position = Vector2(434, 14)
 "字" = "喳"
+"生命_上线" = 2
 
 [node name="冻结区2" type="Node2D" parent="."]
 visible = false
@@ -80,61 +96,69 @@ visible = false
 [node name="CharacterBody2D" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(-403, 11)
 "字" = "阴"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D2" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(-344, 12)
 "字" = "阳"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D3" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(-278, 9)
 "字" = "怪"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D4" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(-208, 9)
 "字" = "气"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D5" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(224, 16)
 "字" = "指"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D6" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(283, 17)
 "字" = "手"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D7" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(349, 14)
 "字" = "画"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="CharacterBody2D8" parent="冻结区2" instance=ExtResource("3_io8c7")]
 position = Vector2(419, 14)
 "字" = "脚"
-"血量" = 3
+"生命_上线" = 3
 
 [node name="冻结区3" type="Node2D" parent="."]
+visible = false
 
 [node name="CharacterBody2D" parent="冻结区3" instance=ExtResource("3_io8c7")]
 position = Vector2(-403, 11)
 "字" = "装"
-"血量" = 8
+"生命_上线" = 8
 
 [node name="CharacterBody2D2" parent="冻结区3" instance=ExtResource("3_io8c7")]
 position = Vector2(-344, 12)
 "字" = "聋"
-"血量" = 8
+"生命_上线" = 8
 
 [node name="CharacterBody2D3" parent="冻结区3" instance=ExtResource("3_io8c7")]
 position = Vector2(329, 3)
 "字" = "作"
-"血量" = 8
+"生命_上线" = 8
 
 [node name="CharacterBody2D4" parent="冻结区3" instance=ExtResource("3_io8c7")]
 position = Vector2(399, 3)
 "字" = "哑"
-"血量" = 8
+"生命_上线" = 8
+
+[node name="Label2" type="Label" parent="."]
+offset_left = -50.0
+offset_top = 140.0
+offset_right = 62.0
+offset_bottom = 157.0
+text = "致敬 哑谜--兰音"

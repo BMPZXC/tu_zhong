@@ -20,7 +20,7 @@ static  func 获取战斗场景组(战斗场景_:Array[Node2D],玩家,下一关:
 class 战斗场景:
 	var _父节点:Node
 	var _场景:Node
-	var _玩家:Node
+	var _玩家:Player_2
 	var _下一关:Callable
 	var _场景_使用中:Node
 	var _场景_重来:战斗场景  #在多波敌人中使用
@@ -28,8 +28,8 @@ class 战斗场景:
 	var _选择中=false
 	func 进入战斗():
 		_玩家.禁用输入(false)
-		if not _玩家.health_component.died.is_connected(_战败):
-			_玩家.health_component.died.connect(_战败)
+		if not _玩家.死亡.is_connected(_战败):
+			_玩家.死亡.connect(_战败)
 		var a=_场景.duplicate()
 		_场景_使用中=a
 		a.child_exiting_tree.connect(_战斗结束)
@@ -51,11 +51,11 @@ class 战斗场景:
 				_场景_使用中.queue_free()
 				_玩家.重置()
 				if _场景_重来:
-					_玩家.health_component.died.disconnect(_战败)
+					_玩家.死亡.disconnect(_战败)
 					_场景_重来.进入战斗()
 				else :进入战斗()
 			"继续":
-				_玩家.health_component.current_health=_玩家.health_component.max_health
+				_玩家.生命=_玩家.生命_上线
 			"跳过":
 				_场景_使用中.queue_free()
 				_玩家.重置()
@@ -68,7 +68,7 @@ class 战斗场景:
 		_选择中=false
 	func _下一关_1():
 		_玩家.禁用输入(true)
-		_玩家.health_component.died.disconnect(_战败)
+		_玩家.死亡.disconnect(_战败)
 		_下一关.call()
 			
 	
@@ -113,18 +113,18 @@ static func 暂停(node: Node, pause: bool):
 	node.set_process(!pause)
 	node.set_physics_process(!pause)
 
-	## 停止/恢复动画播放器
-	for ap in node.get_children():
-		if ap is AnimationPlayer:
-			ap.set_process(!pause)
-			if pause: ap.stop() 
-			else: ap.play()
-
-	# 停止/恢复 Timer
-	if node is Timer:
-		node.set_process(!pause)
-		if pause: node.stop()  
-		else: node.start()
+	### 停止/恢复动画播放器
+	#for ap in node.get_children():
+		#if ap is AnimationPlayer:
+			#ap.set_process(!pause)
+			#if pause: ap.stop() 
+			#else: ap.play()
+#
+	## 停止/恢复 Timer
+	#if node is Timer:
+		#node.set_process(!pause)
+		#if pause: node.stop()  
+		#else: node.start()
 
 	# 递归子节点
 	for child in node.get_children():

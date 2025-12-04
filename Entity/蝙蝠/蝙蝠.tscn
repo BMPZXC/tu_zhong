@@ -1,15 +1,14 @@
-[gd_scene load_steps=43 format=3 uid="uid://ctlx8hixjtifs"]
+[gd_scene load_steps=41 format=3 uid="uid://ctlx8hixjtifs"]
 
-[ext_resource type="Script" uid="uid://v4uwxotregtq" path="res://GDBase/Health/health_component.gd" id="1_naxpf"]
-[ext_resource type="Script" uid="uid://cj3xyb234cfoh" path="res://GDBase/Health/health_cells_progress_bar.gd" id="2_4qbqk"]
 [ext_resource type="Script" uid="uid://iubl2fg1wf6e" path="res://Entity/攻击区.gd" id="3_wj4py"]
 [ext_resource type="Texture2D" uid="uid://x2k2pue47oil" path="res://Entity/蝙蝠/Bat-Die.png" id="5_2r4tn"]
 [ext_resource type="Texture2D" uid="uid://bq3e1irimfv5w" path="res://Entity/蝙蝠/Bat-Hurt.png" id="6_etqrk"]
+[ext_resource type="Script" uid="uid://ddxd3e68gj4d7" path="res://Entity/血条_显示.gd" id="6_q4u4e"]
 [ext_resource type="Texture2D" uid="uid://bamw4vl83xc4o" path="res://Entity/蝙蝠/Bat-IdleFly.png" id="7_r81oh"]
 [ext_resource type="Texture2D" uid="uid://bb50qt5kxjlmk" path="res://Entity/蝙蝠/Bat-Run.png" id="8_kdh8u"]
 
 [sub_resource type="GDScript" id="GDScript_807mj"]
-script/source = "extends CharacterBody2D
+script/source = "extends 生物
 @export var 攻击间隔:float=2
 @export var 敌人:CharacterBody2D
 func _ready() -> void:
@@ -17,7 +16,7 @@ func _ready() -> void:
 	
 var 模式:Callable=靠近
 func _physics_process(delta: float) -> void:
-	if not 敌人 or  死亡:return
+	if not 敌人 or  生命<=0:return
 	模式.call(delta)
 	move_and_slide()
 	
@@ -28,8 +27,8 @@ func 靠近(delta: float):
 	if 差值.x*图片_方向<-1:
 		scale.x=-scale.x
 		图片_方向=-图片_方向
-	if 差值.length()>150:
-		velocity=velocity+(20*差值.normalized()-velocity)*10*delta
+	if 差值.length()>120:
+		velocity=velocity+(40*差值.normalized()-velocity)*10*delta
 		animated_sprite_2d.play(\"i\")
 	else :
 		velocity=velocity+-velocity*10*delta
@@ -58,22 +57,18 @@ func 上升(delta: float):
 func 掉落(delta: float):
 	velocity.y=velocity.y+(50-velocity.y)*10*delta
 
-var 死亡=false
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
-@onready var health_component: HealthComponent = $HealthComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 func _on_health_component_died() -> void:
-	if 死亡:return
-	死亡=true
+	set_collision_layer_value(1<<2,false)
 	模式=掉落
 	animated_sprite_2d.play(\"d\")
 	await get_tree().physics_frame
 	collision_shape_2d.disabled=true
-	health_component.monitorable=false
 	
 	await animated_sprite_2d.animation_finished
 	queue_free()
-func _on_health_component_health_delta_applied(_amount: int) -> void:
+func _on_health_component_health_delta_applied() -> void:
 	if 模式==靠近 or 模式==上升:
 		var a=模式
 		模式=空模式
@@ -84,9 +79,6 @@ func _on_health_component_health_delta_applied(_amount: int) -> void:
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_807mj"]
 size = Vector2(24, 36)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ful33"]
-size = Vector2(16, 21)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uafib"]
 size = Vector2(21, 22)
@@ -384,30 +376,11 @@ _data = {
 [node name="蝙蝠" type="CharacterBody2D"]
 collision_layer = 4
 script = SubResource("GDScript_807mj")
+"生命_上线" = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_807mj")
-
-[node name="HealthComponent" type="Area2D" parent="."]
-collision_layer = 4
-collision_mask = 0
-script = ExtResource("1_naxpf")
-max_health = 3
-current_health = 3
-metadata/_custom_type_script = "uid://v4uwxotregtq"
-
-[node name="HealthCellsProgressBar" type="Node2D" parent="HealthComponent" node_paths=PackedStringArray("health_component")]
-position = Vector2(-16, 5)
-script = ExtResource("2_4qbqk")
-health_component = NodePath("..")
-max_cells_num = 3
-current_cells_num = 3
-metadata/_custom_type_script = "uid://cj3xyb234cfoh"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealthComponent"]
-position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_ful33")
 
 [node name="DamageComponent" type="Area2D" parent="."]
 collision_layer = 0
@@ -430,6 +403,12 @@ libraries = {
 &"": SubResource("AnimationLibrary_hyl28")
 }
 
-[connection signal="died" from="HealthComponent" to="." method="_on_health_component_died"]
-[connection signal="health_delta_applied" from="HealthComponent" to="." method="_on_health_component_health_delta_applied"]
+[node name="血条" type="Node2D" parent="." node_paths=PackedStringArray("目标")]
+position = Vector2(-19, 8)
+script = ExtResource("6_q4u4e")
+"目标" = NodePath("..")
+metadata/_custom_type_script = "uid://ddxd3e68gj4d7"
+
+[connection signal="死亡" from="." to="." method="_on_health_component_died"]
+[connection signal="生命_" from="." to="." method="_on_health_component_health_delta_applied"]
 [connection signal="area_entered" from="DamageComponent" to="DamageComponent" method="_on_area_entered"]

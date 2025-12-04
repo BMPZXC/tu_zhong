@@ -1,22 +1,19 @@
-extends CharacterBody2D
+extends 生物
 class_name Player_2
 
-
-@onready var health_component: HealthComponent = $HealthComponent
-@onready var move_gravity_by_input: MoveGravityByInputComponent = $MoveGravityByInput
 @onready var camera_2d: Camera2D = $Camera2D
 
 ####
 
 ##用于 战败 中的 重来
 func 重置():
-	health_component.current_health=health_component.max_health
+	生命=生命_上线
 	position=_初始位置
 	#await get_tree().physics_frame  无法处理 受击 的 击飞
 	#velocity=Vector2.ZERO
 	
 func 禁用输入(a:bool):   ##用于剧情 以及 战斗
-	move_gravity_by_input.set_physics_process(!a)
+	set_physics_process(!a)
 	禁用攻击=a
 	
 func 冻结(a:bool):###用于跳转场景,但保留当前
@@ -66,24 +63,6 @@ func 限制相机移动(a:Control):
 ###
 var _初始位置:Vector2
 
-func _on_fire_ball_created_interval_timer(timer: Timer) -> void:
-	$CanvasLayer/HBoxContainer/R.init(timer)
-func _on_circular_chop_created_interval_timer(timer: Timer) -> void:
-	$CanvasLayer/HBoxContainer/F.init(timer)
-
-func _on_attack_fired(dir: Vector2) -> void:
-	$MoveGravityByInput.set_velocity(-dir * 16)
-func _on_fire_fired(dir: Vector2) -> void:
-	$MoveGravityByInput.set_velocity(-dir * 16)
-func _on_fire_ball_fired(dir: Vector2) -> void:
-	$MoveGravityByInput.set_velocity(-dir * 256)
-func _on_circular_chop_fired(dir: Vector2) -> void:
-	$MoveGravityByInput.set_velocity(-dir * 512)
-
-func _on_health_component_hited(dir: Vector2i) -> void:
-	$MoveGravityByInput.set_velocity(-dir * 256)
-	
-	
 	
 ############
 var 图片_方向=1
@@ -92,7 +71,7 @@ var 图片_方向=1
 var 锁定:bool=false:
 	set(a):
 		锁定=a
-		move_gravity_by_input.set_physics_process(!a)
+		set_physics_process(!a)
 		if a:velocity=Vector2.ZERO
 
 func 切换职业(a:职业):
@@ -108,9 +87,15 @@ func _process(_delta: float) -> void:
 			切换职业(i)
 			break
 	if Input.is_action_just_pressed("attack"):
-		锁定=true
-		await  当前职业.普攻()
-		锁定=false
+		var a=false
+		if  is_on_floor():a=true
+		elif not is_on_floor() and 空中只能攻击一次 :
+			空中只能攻击一次=false
+			a=true
+		if a:
+			锁定=true
+			await  当前职业.普攻()
+			锁定=false
 	elif 可_闪现==true and Input.is_action_just_pressed("闪现"):
 		锁定=true
 		await  闪现()
@@ -118,21 +103,47 @@ func _process(_delta: float) -> void:
 
 var 模式:Callable=空
 func 空(_delta: float) -> void:pass
+var 空中跳=true
+var 空中只能攻击一次=true
 func _physics_process(delta: float) -> void:
-	模式.call(delta)
+	if 模式==空:
+		var a=Input.get_axis("左","右")
+		if a*图片_方向<0:
+			scale.x=-scale.x
+			图片_方向=-图片_方向
+		velocity.x=velocity.x+(200*sign(a)-velocity.x)*delta*5
+
+		if not is_on_floor():
+			velocity.y+=10
+			if 空中跳 and Input.is_action_just_pressed("跳"):
+				空中跳=false
+				velocity.y=-200
+		else :
+			空中只能攻击一次=true
+			空中跳=true
+			if Input.is_action_just_pressed("跳"):
+				velocity.y=-200
+		move_and_slide()
+	else :
+		模式.call(delta)
+	
 func 闪现_(_delta: float) -> void:
 	velocity=Vector2(500*图片_方向,0)
 	move_and_slide()
-
+func 金身():
+	set_collision_layer_value(1<<1,false)
+func 金身_取消():
+	set_collision_layer_value(1<<1,true)
 
 @onready var 鼠标右键 = $CanvasLayer/右下/鼠标右键
 var 可_闪现:bool=true
 func 闪现():
 	可_闪现=false
+	set_physics_process(true)
 	模式=闪现_
-	health_component.monitorable=false
+	金身()
 	await  get_tree().create_timer(0.25).timeout
-	health_component.monitorable=true
+	金身_取消()
 	模式=空
 	鼠标右键.冷却()
 	#可_闪现=false
@@ -144,5 +155,8 @@ func _on_move_gravity_by_input_转向() -> void:
 	图片_方向=-图片_方向
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-func _on_health_component_health_delta_applied(_amount: int) -> void:
+func _减血() -> void:
+	金身()
 	animation_player.play("受击")
+	await animation_player.animation_finished
+	金身_取消()

@@ -1,11 +1,8 @@
-[gd_scene load_steps=67 format=3 uid="uid://c5p3akujvmitw"]
+[gd_scene load_steps=64 format=3 uid="uid://c5p3akujvmitw"]
 
 [ext_resource type="Script" uid="uid://bo7cdxcjy6i7i" path="res://Entity/主角/entity_2.gd" id="1_aedmp"]
 [ext_resource type="Texture2D" uid="uid://domlvvs4mv48i" path="res://Entity/主角/主角.png" id="2_uhjsk"]
-[ext_resource type="Shader" uid="uid://clp8hn51js7q0" path="res://Shader/受击.gdshader" id="2_xethj"]
-[ext_resource type="Script" uid="uid://twsbkr63b21g" path="res://GDBase/Move/Input/move_gravity_by_input_component.gd" id="3_kohgm"]
-[ext_resource type="Script" uid="uid://v4uwxotregtq" path="res://GDBase/Health/health_component.gd" id="5_v6kgo"]
-[ext_resource type="PackedScene" uid="uid://dssccalehutiv" path="res://GDBase/CellProgressBar/cells_progress_bar.tscn" id="6_ajqgl"]
+[ext_resource type="Shader" uid="uid://clp8hn51js7q0" path="res://Entity/主角/受击.gdshader" id="2_xethj"]
 [ext_resource type="Texture2D" uid="uid://1yfmn2voamr8" path="res://Entity/主角/主角-攻击_1.png" id="7_qjlo7"]
 [ext_resource type="Texture2D" uid="uid://bueumc6ilv2u5" path="res://Entity/主角/按键ui/闪现.png" id="8_0qels"]
 [ext_resource type="Texture2D" uid="uid://biaixp6t131r8" path="res://Entity/主角/按键ui/鼠标左键.png" id="8_ajqgl"]
@@ -16,9 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://cxkcil5oakd2w" path="res://Entity/主角/按键ui/鼠标右键.png" id="10_vta88"]
 [ext_resource type="Texture2D" uid="uid://d4lxnualbpoto" path="res://Entity/主角/按键ui/箭头.png" id="11_vta88"]
 [ext_resource type="Texture2D" uid="uid://dt4i2tk7iilvt" path="res://Entity/主角/主角_盾.png" id="11_xcxbn"]
-[ext_resource type="PackedScene" uid="uid://o8oiohshndjo" path="res://GDBase/ui/技能按钮_2.tscn" id="13_uhjsk"]
+[ext_resource type="PackedScene" uid="uid://o8oiohshndjo" path="res://Entity/主角/技能按钮_2.tscn" id="13_uhjsk"]
 [ext_resource type="Texture2D" uid="uid://dpg8vyn035ska" path="res://Entity/主角/按键ui/图标_剑.png" id="15_g4f1u"]
 [ext_resource type="Texture2D" uid="uid://boad6f7dv2h2k" path="res://Entity/主角/按键ui/图标_弓.png" id="18_8ndxi"]
+[ext_resource type="Script" uid="uid://ddxd3e68gj4d7" path="res://Entity/血条_显示.gd" id="19_3uyxx"]
 [ext_resource type="Texture2D" uid="uid://c2630hlu30otg" path="res://Entity/主角/按键ui/图标_盾.png" id="20_vmob0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_neb7i"]
@@ -28,14 +26,6 @@ shader_parameter/flash_color = Vector4(0.4, 0.4, 0.4, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sxyjl"]
 size = Vector2(15, 28)
-
-[sub_resource type="Curve" id="Curve_h2qjg"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_boq8c"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8a2w1"]
 atlas = ExtResource("7_qjlo7")
@@ -110,8 +100,10 @@ func 切入():
 func 普攻():
 	set_process(true)
 	再次点击鼠标左键=true
-	while 再次点击鼠标左键:
+	命中=true
+	while 再次点击鼠标左键 and 命中:
 		再次点击鼠标左键=false
+		命中=false
 		await  攻击()
 	set_process(false)
 var _攻击段数_当前:int=0
@@ -128,6 +120,10 @@ var 再次点击鼠标左键=false
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(\"attack\"):
 		再次点击鼠标左键=true
+
+var 命中=false
+func _on_攻击区_命中() -> void:
+	命中=true
 "
 
 [sub_resource type="Animation" id="Animation_xethj"]
@@ -288,22 +284,9 @@ tracks/0/keys = {
 "update": 1,
 "values": [false]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("主角:material:shader_parameter/qiang_hua")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
 
 [sub_resource type="Animation" id="Animation_xcxbn"]
 resource_name = "受击"
-length = 0.4
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -311,22 +294,10 @@ tracks/0/path = NodePath("主角:material:shader_parameter/is_hit")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.23333333, 0.4),
+"times": PackedFloat32Array(0, 0.26666668, 0.6, 0.96666664),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [true, false, true, false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("主角:material:shader_parameter/qiang_hua")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.23333333, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.0, 1.0, 0.0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_uhjsk"]
@@ -509,16 +480,15 @@ animations = [{
 
 [sub_resource type="GDScript" id="GDScript_xcxbn"]
 script/source = "extends 职业
+@onready var entity_2: Player_2 = $\"..\"
 
-
-@onready var health_component: HealthComponent = $\"../HealthComponent\"
-@onready var 回复: HealthComponent = $HealthComponent
+@onready var collision_shape_2d: CollisionShape2D = $HealthComponent/CollisionShape2D
 @onready var progress_bar: ProgressBar = $ProgressBar
 
 signal 结束
 func 普攻():
-	health_component.monitorable=false
-	回复.monitorable=true
+	entity_2.金身()
+	collision_shape_2d.disabled=false
 	progress_bar.visible=true
 	攻击_=false
 	按下攻击=false
@@ -526,6 +496,7 @@ func 普攻():
 	play(\"蓄力\")
 	set_process(true)
 	await 结束
+	
 func _ready() -> void:
 	set_process(false)
 var 攻击_:bool
@@ -544,20 +515,25 @@ func _process(delta: float) -> void:
 
 func 攻击():
 	攻击_=true
-	health_component.monitorable=true
-	回复.monitorable=false
+	entity_2.金身_取消()
+	collision_shape_2d.disabled=true
 	progress_bar.visible=false
 	animation_player.play(\"普攻_攻击\")
 	await animation_player.animation_finished
 	结束.emit()
 
 
-func _on_health_component_health_delta_applied(_amount: int) -> void:
-	health_component.current_health+=1
+func 盾反回复() -> void:
+	if entity_2.生命<entity_2.生命_上线:
+		entity_2.生命+=1
 	play(\"受击\")
 	await animation_finished
 	if 攻击_==false:
 		play(\"蓄力\")
+"
+
+[sub_resource type="GDScript" id="GDScript_vta88"]
+script/source = "extends 生物
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uhjsk"]
@@ -658,6 +634,7 @@ bg_color = Color(1, 1, 1, 1)
 z_index = 1
 collision_layer = 2
 script = ExtResource("1_aedmp")
+"生命_上线" = 3
 
 [node name="主角" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_neb7i")
@@ -667,43 +644,6 @@ texture = ExtResource("2_uhjsk")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2.5, -5)
 shape = SubResource("RectangleShape2D_sxyjl")
-
-[node name="MoveGravityByInput" type="Node" parent="." node_paths=PackedStringArray("mover")]
-script = ExtResource("3_kohgm")
-mover = NodePath("..")
-gravity = 16.0
-jump_power = 256.0
-max_jump_num = 2
-jump_num = 2
-empty_jump_time = 1.0
-dash_time = 0.2
-dash_speed = 512.0
-time_faster = 0.2
-time_slower = 0.2
-faster_curve = SubResource("Curve_h2qjg")
-slower_curve = SubResource("Curve_boq8c")
-
-[node name="HealthComponent" type="Area2D" parent="."]
-position = Vector2(1, -5)
-collision_layer = 2
-collision_mask = 0
-script = ExtResource("5_v6kgo")
-max_health = 3
-current_health = 3
-is_hited_with_invulnerable = true
-hitd_invulnerable_time = 1.0
-metadata/_custom_type_script = "uid://v4uwxotregtq"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealthComponent"]
-position = Vector2(2, -1)
-shape = SubResource("RectangleShape2D_sxyjl")
-
-[node name="CellsProgressBar" parent="HealthComponent" node_paths=PackedStringArray("health_component") instance=ExtResource("6_ajqgl")]
-position = Vector2(-12, 10)
-health_component = NodePath("..")
-max_cells_num = 3
-current_cells_num = 3
-vertical = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -725,7 +665,7 @@ alignment = 2
 [node name="鼠标左键" parent="CanvasLayer/右下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = ""
-"冷却值" = -8338.378275076286
+"冷却值" = -8339.208554965175
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标左键"]
 layout_mode = 1
@@ -746,7 +686,7 @@ texture = ExtResource("8_ajqgl")
 layout_mode = 2
 "按键" = ""
 "技能_图标" = ExtResource("8_0qels")
-"冷却值" = -8338.378275076286
+"冷却值" = -8339.208554965175
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标右键"]
 layout_mode = 1
@@ -779,19 +719,19 @@ theme_override_constants/separation = 20
 layout_mode = 2
 "按键" = "A"
 "技能_图标" = ExtResource("9_v6kgo")
-"冷却值" = -8338.378275076286
+"冷却值" = -8339.208554965175
 
 [node name="技能按钮2" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "w"
 "技能_图标" = ExtResource("10_ajqgl")
-"冷却值" = -8338.378275076286
+"冷却值" = -8339.208554965175
 
 [node name="技能按钮3" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "d"
 "技能_图标" = ExtResource("11_vta88")
-"冷却值" = -8338.378275076286
+"冷却值" = -8339.208554965175
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -824,19 +764,19 @@ alignment = 1
 layout_mode = 2
 "按键" = "1"
 "技能_图标" = ExtResource("15_g4f1u")
-"冷却值" = -18.230483555555164
+"冷却值" = -19.060763444444017
 
 [node name="技能按钮2" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "2"
 "技能_图标" = ExtResource("18_8ndxi")
-"冷却值" = -18.327852666666367
+"冷却值" = -19.15813255555522
 
 [node name="技能按钮3" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "3"
 "技能_图标" = ExtResource("20_vmob0")
-"冷却值" = -18.32346222222183
+"冷却值" = -19.15374211111069
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
@@ -890,19 +830,16 @@ script = SubResource("GDScript_xcxbn")
 "切换按键" = "切_盾"
 "普攻_图标" = ExtResource("20_vmob0")
 
-[node name="HealthComponent" type="Area2D" parent="盾"]
+[node name="HealthComponent" type="CharacterBody2D" parent="盾"]
 position = Vector2(1, -5)
 collision_layer = 2
 collision_mask = 0
-monitorable = false
-script = ExtResource("5_v6kgo")
-is_hited_with_invulnerable = true
-hitd_invulnerable_time = 1.0
-metadata/_custom_type_script = "uid://v4uwxotregtq"
+script = SubResource("GDScript_vta88")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="盾/HealthComponent"]
 position = Vector2(2, -1)
 shape = SubResource("RectangleShape2D_sxyjl")
+disabled = true
 
 [node name="攻击区" type="Area2D" parent="盾"]
 collision_layer = 0
@@ -931,7 +868,12 @@ value = 83.97
 show_percentage = false
 metadata/_edit_use_anchors_ = true
 
-[connection signal="转向" from="MoveGravityByInput" to="." method="_on_move_gravity_by_input_转向"]
-[connection signal="health_delta_applied" from="HealthComponent" to="." method="_on_health_component_health_delta_applied"]
-[connection signal="hited" from="HealthComponent" to="." method="_on_health_component_hited"]
-[connection signal="health_delta_applied" from="盾/HealthComponent" to="盾" method="_on_health_component_health_delta_applied"]
+[node name="血条" type="Node2D" parent="." node_paths=PackedStringArray("目标")]
+position = Vector2(-12, 6)
+script = ExtResource("19_3uyxx")
+"目标" = NodePath("..")
+metadata/_custom_type_script = "uid://ddxd3e68gj4d7"
+
+[connection signal="生命_" from="." to="." method="_减血"]
+[connection signal="命中" from="剑2/攻击区" to="剑2" method="_on_攻击区_命中"]
+[connection signal="生命_" from="盾/HealthComponent" to="盾" method="盾反回复"]

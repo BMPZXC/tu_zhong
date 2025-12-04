@@ -26,9 +26,9 @@
 
 ## ⚙️ 开发日志与视频演示
 
-- 日志一： 
-- 日志二：
-- 日志三：
+- 日志一：https://www.bilibili.com/opus/1142505105134714884?spm_id_from=333.1387.0.0
+- 日志二：https://www.bilibili.com/opus/1142505302681190455?spm_id_from=333.1387.0.0
+- 日志三：https://www.bilibili.com/opus/1142505380031496196?spm_id_from=333.1387.0.0
 - 视频：
 
 ---

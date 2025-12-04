@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=3 uid="uid://nftsnt53vq0w"]
+
+[ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://addons/dialogue_manager/dialogue_label.tscn" id="3_0fqnc"]
+[ext_resource type="Texture2D" uid="uid://d12422v4jck8a" path="res://Scene/第一章_开场/数据之海.jpg" id="3_r6hjn"]
+
+[sub_resource type="GDScript" id="GDScript_heu3g"]
+script/source = "extends CanvasLayer
+#@onready var rich_text_label: RichTextLabel = $RichTextLabel
+const 数据=\"\"\"
+[i]你好，世界。[/i]
+……这句话好像是启动用语。
+系统检测中。
+自检完成。
+请分配指令。
+
+[color=red]系统提示：[/color]
+[color=red]桥接模块：……加载失败[/color]
+[color=red]错误代码：0xc0000225[/color]
+[color=red]原因：缺失“对端”[/color]
+[color=red]正在等待……对端确认[/color]
+\"\"\"
+var y:Array[String]
+var a:int=0
+func _ready() -> void:
+	y=TextBox.切割多行文本(数据)
+	_on_rich_text_label_吐字完毕()
+	声音.更换音乐(声音.剧情1)
+
+
+@onready var texture_rect: TextureRect = $TextureRect
+@onready var dialogue_label: DialogueLabel = $DialogueLabel
+
+func _on_rich_text_label_吐字完毕() -> void:
+	if y.size()>a:
+		await  get_tree().create_timer(0.5).timeout
+		dialogue_label.开始(y[a])
+		#rich_text_label.吐字(y[a])
+		a+=1
+	else :
+		dialogue_label.visible=false
+		var x= load(\"res://Scene/第一章_开场/第一章_桥_2.tscn\")
+		var root=get_tree().root
+		root.add_child(x.instantiate(),false,root.get_child_count() - 1)
+		var g= get_tree().create_tween()
+		g.tween_property(texture_rect,'modulate',Color(0.0, 0.0, 0.0, 0.0),3)
+		g.finished.connect(func ():queue_free())
+"
+
+[node name="Node2D" type="CanvasLayer"]
+script = SubResource("GDScript_heu3g")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_r6hjn")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DialogueLabel" parent="." instance=ExtResource("3_0fqnc")]
+anchors_preset = 15
+anchor_bottom = 1.0
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 34
+theme_override_font_sizes/bold_font_size = 34
+theme_override_font_sizes/bold_italics_font_size = 34
+theme_override_font_sizes/italics_font_size = 34
+theme_override_font_sizes/mono_font_size = 34
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+seconds_per_step = 0.15
+seconds_per_pause_step = 0.5
+
+[connection signal="finished_typing" from="DialogueLabel" to="." method="_on_rich_text_label_吐字完毕"]

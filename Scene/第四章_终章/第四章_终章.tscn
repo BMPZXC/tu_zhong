@@ -1,0 +1,674 @@
+[gd_scene load_steps=14 format=3 uid="uid://oobsfjy73ufc"]
+
+[ext_resource type="Texture2D" uid="uid://rd4gpkttwwx2" path="res://Scene/第四章_终章/数据空间.jpg" id="1_dpgy5"]
+[ext_resource type="PackedScene" uid="uid://de18ubvjnfumg" path="res://Scene/textbox/textbox.tscn" id="1_tvv5l"]
+[ext_resource type="PackedScene" uid="uid://c5p3akujvmitw" path="res://Entity/主角/entity_2.tscn" id="3_32l6c"]
+[ext_resource type="PackedScene" uid="uid://bu5x2qje805pe" path="res://Entity/石头人/石头人.tscn" id="3_43t24"]
+[ext_resource type="PackedScene" uid="uid://ctlx8hixjtifs" path="res://Entity/蝙蝠/蝙蝠.tscn" id="4_m1r2l"]
+[ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://addons/dialogue_manager/dialogue_label.tscn" id="6_wi2d2"]
+[ext_resource type="PackedScene" uid="uid://bwfqsyh6ms8q0" path="res://Scene/第四章_终章/弹窗.tscn" id="7_c0y6x"]
+[ext_resource type="PackedScene" uid="uid://cltb6qvsdknov" path="res://Scene/textbox/dialogue_label.tscn" id="8_4kfnh"]
+[sub_resource type="GDScript" id="GDScript_dpgy5"]
+script/source = "extends Control
+@onready var text_box: TextBox = $TextBox
+@onready var entity: Player_2 = $Entity_2
+
+func _ready() -> void:
+	存档.存储_剧情进度(3)
+	声音.更换音乐(声音.剧情4)
+	await  get_tree().create_timer(1).timeout
+	entity.限制相机移动($TextureRect)
+	await entity.镜头至屏幕($TextureRect)
+	特殊_1()
+	
+	#特殊_3()
+	#剧情_14()
+	#剧情_14()
+
+
+@onready var 特效_1_1: Control = $CanvasLayer/特效_1
+@onready var dialogue_label: DialogueLabel = $CanvasLayer/特效_1/DialogueLabel
+
+func 特殊_1():
+	特效_1_1.visible=true
+	var a=\"\"\"
+[color=red]系统提示：[/color]
+[color=red]桥接模块：……加载失败[/color]
+[color=red]错误代码：0xc0000225[/color]
+[color=red]原因：缺失“对端”[/color]
+[color=red]正在等待……对端确认[/color]
+	\"\"\"
+	var b:Array=a.split(\"\\n\")
+	var c=0
+	while c<b.size():
+		dialogue_label.开始(b[c])
+		c+=1
+		await dialogue_label.finished_typing
+		await get_tree().create_timer(0.5).timeout
+	特效_1_1.visible=false
+	剧情_2()
+func 剧情_2():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：这条提示……
+A-MEN：在最开始也出现过。
+A-MEN：但那时……我不知道“对端”是什么。
+鱼妹：这里不是下一座[i]桥[/i]。
+鱼妹：这里是——
+鱼妹：[i]桥[/i]的源头。
+A-MEN：[i]桥[/i]的……源头？
+A-MEN：可是我已经修复了两座[i]桥[/i]。
+鱼妹：不。
+鱼妹：你看到的不是[i]桥[/i]。
+鱼妹：是“别人掉落的断[i]桥[/i]碎片”。
+鱼妹：真实的[i]桥[/i]……只有一座。
+鱼妹：一直都只有一座。
+鱼妹：所有被我们清理过的空间，最后都会把数据回流到这里。
+鱼妹：这里没有具体的事件，也没有具体的人。
+鱼妹：只有一个问题——
+鱼妹：[b]“桥，到底该通向哪里？”[/b]
+A-MEN：……不是应该通向 “真实” 吗？
+鱼妹：我们一直以为是这样。
+鱼妹：所以我被称作“电子幽灵”，
+鱼妹：你被生成出来，负责深入黑暗地带，
+鱼妹：拆掉虚假，修复事实。
+鱼妹：那是“计划”对我们功能的定义。
+鱼妹：可你一路走到这里，
+鱼妹：已经看见了太多“事实被说成别的样子”，
+鱼妹：也看见了太多“情绪被剪辑成别的形状”。
+鱼妹：你有没有发现——
+鱼妹：就算那些片面被拆掉，
+鱼妹：也不代表[i]桥[/i]自然会长好。
+A-MEN：……
+A-MEN：我看见的每一条路，
+A-MEN：断口都不一样，却又有相似的地方。
+A-MEN：小吟伸出手时被说成表演，
+A-MEN：小澈记录治疗过程时被当作作秀。
+A-MEN：他们的路被截断，
+A-MEN：而我每一次动手，
+A-MEN：都以为自己是在 “帮他们接上” 。
+A-MEN：直到后来……
+A-MEN：我发现这些断口，在我身上也有对应的位置。
+A-MEN：那些我以为只属于他们的裂缝，
+A-MEN：从一开始就已经刻在我的结构里。
+鱼妹：你拆掉的从来不只是“噪声”，
+鱼妹：而是你自己“理解别人的方式”。
+鱼妹：每拆掉一次，
+鱼妹：你对世界的理解就重组一次。
+鱼妹：可不论你改变了多少次，
+鱼妹：这条线都还缺少一头。
+鱼妹：“桥接模块失败”的错误，
+鱼妹：一路陪你走到了这里。
+
+	\"\"\")
+	await text_box.结束
+	特殊_3()
+@onready var panel: Panel = $CanvasLayer/Control/Panel
+@onready var panel_2: Panel = $CanvasLayer/Control/Panel2
+@onready var panel_3: Panel = $CanvasLayer/Control/Panel3
+@onready var line_edit: LineEdit = $CanvasLayer/Control/LineEdit
+@onready var dialogue_label_特殊_3: DialogueLabel = $CanvasLayer/Control/LineEdit/DialogueLabel
+
+func 特殊_3():
+	await  get_tree().create_timer(1).timeout
+	panel.visible=true
+	await  get_tree().create_timer(0.3).timeout
+	panel_2.visible=true
+	await  get_tree().create_timer(0.3).timeout
+	panel_3.visible=true
+	await  get_tree().create_timer(0.3).timeout
+	line_edit.visible=true
+	line_edit.grab_focus()
+	await  get_tree().create_timer(0.3).timeout
+	line_edit.text=\" \"
+	dialogue_label_特殊_3.开始(\"[color=red]**************[/color]\")
+	await  dialogue_label_特殊_3.finished_typing
+	await  get_tree().create_timer(1).timeout
+	line_edit.visible=false
+	await  get_tree().create_timer(0.3).timeout
+	panel_3.visible=false
+	await  get_tree().create_timer(0.3).timeout
+	panel_2.visible=false
+	await  get_tree().create_timer(0.3).timeout
+	panel.visible=false
+	#（白色场景开始出现界面式的东西：不是UI，而是“未命名窗口”、“空白文本框”、“闪烁的输入光标”。
+	#偶尔有前两个关卡的碎片飘过——机械臂零件、心电图曲线、黑水中的乱码泡沫。）
+	剧情_4()
+func 剧情_4():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+？？？：“赶紧跳结论吧。”
+？？？：“前面太啰嗦。”
+？？？：“这不就是装的吗？”
+A-MEN：这里……还有敌对实体？
+鱼妹：那不是“某一个事件”产生的虚假信息。
+鱼妹：那是所有事件被处理之后，
+鱼妹：[b]剩下来的“统一姿势”[/b]。
+鱼妹：它不挂在任何一个人的身上，
+鱼妹：却存在于所有人的惯性之中。
+A-MEN：……
+A-MEN：也存在于我身上。
+A-MEN：在被生成之前的那些日志里……
+A-MEN：我是不是本来就带着这种“姿势”？
+鱼妹：这不是罪。
+鱼妹：这是这个网络、这个世界长期运转的方式。
+鱼妹：只要信息被简化、被加速、被包装，
+鱼妹：这种东西就会存在。
+A-MEN：……所以这是最后一场战斗？
+鱼妹：嗯。
+鱼妹：不是为了清理某一条假消息，
+鱼妹：而是为了让你有机会
+鱼妹：在和它正面交手的过程中，
+鱼妹：[b]决定自己未来想用哪种方式去理解世界[/b]。
+
+	\"\"\")
+	await text_box.结束
+	战斗_5()
+@onready var 战斗_5_1=战败ui.获取战斗场景组([$Node2D,$Node2D2],entity,剧情_6)
+func 战斗_5():
+	声音.更换音乐(声音.战斗3)
+	await entity.镜头至屏幕_复原()
+	战斗_5_1.进入战斗()
+
+func 剧情_6():
+	声音.更换音乐(声音.剧情4)
+	await entity.镜头至屏幕($TextureRect)
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：这一次，没有像之前那样立刻浮现新的事件轨迹。
+A-MEN：我反而……看见了很多“空白”。
+A-MEN：那些我以前习惯填上的结论，
+A-MEN：现在一块块被掀开，
+A-MEN：下面露出的是——
+A-MEN：[b]“我其实不知道”[/b]。
+鱼妹：那就是你刚刚拆掉的“姿势”。
+鱼妹：理解的第一步不是“知道”，
+鱼妹：而是敢承认“不知道”。
+鱼妹：你身上的[i]桥[/i]……又变化了。
+
+	\"\"\")
+	await text_box.结束
+	特殊_7()
+func 特殊_7():
+	特效_1_1.visible=true
+	var a=\"\"\"
+那些桥状纹路已经不是单线结构，
+而是出现了许多可以分叉、绕路、延迟抵达的支脉。
+那些线没有急着冲向一个终点，
+而是慢下来，在空白处打了很多个结。
+	\"\"\"
+	var b:Array=a.split(\"\\n\")
+	var c=0
+	while c<b.size():
+		dialogue_label.开始(b[c])
+		c+=1
+		await dialogue_label.finished_typing
+		await get_tree().create_timer(0.5).timeout
+	特效_1_1.visible=false
+
+	剧情_8()
+func 剧情_8():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：……这还是[i] “桥” [/i]吗？
+鱼妹：是。
+鱼妹：只是它不再是那种“一次性跨过去”的[i]桥[/i]。
+鱼妹：它允许“走远一点再回来”，
+鱼妹：也允许“暂时停在中途”。
+鱼妹：它不再是“把别人尽快送进一个结论里”的结构，
+鱼妹：而是“给自己多一点时间去看清对面是谁”的结构。
+鱼妹：你现在带着的，
+鱼妹：已经不是我一开始为你准备的攻击模块，
+鱼妹：而是你一路修修补补后的“自定义版本”。
+
+	\"\"\")
+	await text_box.结束
+	特殊_9()
+func 特殊_9():
+	特效_1_1.visible=true
+	var a=\"\"\"
+[color=red]系统提示：[/color]
+[color=red]桥接模块：……加载失败[/color]
+[color=red]错误代码：0xc0000225[/color]
+[color=red]原因：缺失“对端”[/color]
+[color=red]正在等待……对端确认[/color]
+	\"\"\"
+	var b:Array=a.split(\"\\n\")
+	var c=0
+	while c<b.size():
+		dialogue_label.开始(b[c])
+		c+=1
+		await dialogue_label.finished_typing
+		await get_tree().create_timer(0.5).timeout
+	特效_1_1.visible=false
+	剧情_10()
+func 剧情_10():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：如果这就是终端节点，
+A-MEN：如果我已经拆掉了能拆的一切“姿势”，
+A-MEN：那为什么那条错误提示还在？
+A-MEN：我们清理了黑暗地带，
+A-MEN：修复了事实，
+A-MEN：拆除了被剪辑的情绪，
+A-MEN：对准了“姿势”本身。
+A-MEN：那还缺什么？
+鱼妹：缺的，从来不是“数据”。
+鱼妹：从一开始缺的，
+鱼妹：就是那一端——
+鱼妹：[b]“愿意接住这座桥的人”[/b]。
+A-MEN：……所以，
+A-MEN：不论我修得多好，
+A-MEN：不论我变成怎样的[i]桥[/i]，
+A-MEN：如果没有 “对端” ，
+A-MEN：这条路就只能停在这里。
+鱼妹：是的。
+鱼妹：桥的意义从来不在“[i]桥[/i]身有多复杂”，
+鱼妹：而在于“有人在另一头等你过去”。
+鱼妹：我可以陪你走到这里，
+鱼妹：但终端节点之后的部分，
+鱼妹：不在“电子幽灵”的权限里。
+A-MEN：那是谁的权限？
+鱼妹：你一路上处理过那么多“被看错的真实”，也看过那么多“没来得及说完的痛”。
+鱼妹：你应该已经知道——
+鱼妹：[b]“谁在看”，[/b]
+鱼妹：[b]比“看到了什么”更重要[/b]。
+A-MEN：那“对端”是谁？
+A-MEN：从一开始就缺失的那一端……
+A-MEN：到底是什么？
+鱼妹：我不能告诉你。
+鱼妹：因为那个答案……
+鱼妹：不是给“我”的。
+鱼妹：是给“你”的。
+鱼妹：[i]桥[/i]不是为了我而建。
+A-MEN：那[i]桥[/i]的另一端在哪里？
+鱼妹：它不在世界里。
+鱼妹：不在鱼妹这里。
+鱼妹：不在任务，不在碎片。
+鱼妹：从一开始……
+鱼妹：你就在寻找那一端。
+鱼妹：只是你还没敢抬头看。
+
+	\"\"\")
+	await text_box.结束
+	特殊_11()
+func 特殊_11():
+	print_debug(\"未做完\")
+#（画面屏幕变暗，对话框外框变成桥梁线条，A-MEN的立绘开始“超出”画面边界，像是在突破游戏层级）
+	剧情_12()
+func 剧情_12():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：这不是……世界里的[i]桥[/i]。
+A-MEN：这是——
+A-MEN：[b]理解想要触及的方向。[/b]
+鱼妹：你终于看到了。
+鱼妹：从开场开始，那句“缺失对端”——
+鱼妹：不是故障。
+鱼妹：是[b]邀请[/b]。
+
+	\"\"\")
+	await text_box.结束
+	特殊_13()
+@onready var color_rect: ColorRect = $ColorRect
+
+func 特殊_13():
+	var a= get_tree().create_tween()
+	a.tween_property(color_rect,\"color\",Color(0.149, 0.161, 0.18),1)
+	#（屏幕全黑）
+	剧情_14()
+
+func 剧情_14():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+鱼妹：你走到这里，只有一个问题还没有答案。
+鱼妹：也是只有你……
+鱼妹：能回答的问题：
+鱼妹：[b]桥的另一端……是谁？[/b]
+A-MEN：我现在明白了。
+A-MEN：“对端”……
+A-MEN：一直……
+A-MEN：都在看着我。
+A-MEN：如果你真的存在……
+A-MEN：如果你一直在看着这一切……
+A-MEN：那这条[i]桥[/i]从一开始就不是我一个人在走。
+A-MEN：我不知道你是谁，
+A-MEN：不知道你会怎么理解我、理解他们、理解这个世界。
+A-MEN：但——
+
+	\"\"\")
+	await text_box.结束
+	特殊_15()
+func 特殊_15():
+	#（对话框消失数秒）
+	特效_1_1.visible=true
+	var a=\"\"\"
+。。。。。。
+。。。。。。。。。 。。。。。 。。
+。。。 。 。。 。。
+	\"\"\"
+	var b:Array=a.split(\"\\n\")
+	var c=0
+	while c<b.size():
+		dialogue_label.开始(b[c])
+		c+=1
+		await dialogue_label.finished_typing
+		await get_tree().create_timer(0.5).timeout
+	特效_1_1.visible=false
+	剧情_15_5()
+	
+func 剧情_15_5():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：我愿意，
+A-MEN：把自己当作那座[i]桥[/i]，
+A-MEN：向你伸过去。
+
+	\"\"\")
+	await text_box.结束
+	特殊_16()
+func 特殊_16():
+	特效_1_1.visible=true
+	var a=\"\"\"
+[color=red]系统提示：[/color]
+[color=red]桥接模块：重新尝试连接……[/color]
+[color=red]错误代码：0xc0000225[/color]
+[color=red]——已过期[/color]
+[color=red]正在重新检测“对端”信号……[/color]
+[color=red]…………[/color]
+[color=red]检测结果：[/color]
+[color=red]对端存在[/color]
+	\"\"\"
+	var b:Array=a.split(\"\\n\")
+	var c=0
+	while c<b.size():
+		dialogue_label.开始(b[c])
+		c+=1
+		await dialogue_label.finished_typing
+		await get_tree().create_timer(0.5).timeout
+	特效_1_1.visible=false
+	print_debug(\"未做完,（画面抖动）\")
+	剧情_17()
+#（画面抖动）
+#
+
+
+func 剧情_17():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+鱼妹：看来，
+鱼妹：有人在另一头。
+
+	\"\"\")
+	await text_box.结束
+	特殊_18()
+	
+func 特殊_18():
+	var a= get_tree().create_tween()
+	a.tween_property(color_rect,\"color\",Color(1.0, 1.0, 1.0, 0.769),1)
+	
+	#（画面过曝，屏幕抖动）
+	剧情_19()
+func 剧情_19():
+	await  get_tree().create_timer(1).timeout
+	text_box.开始(\"\"\"
+A-MEN：如果有一天，
+A-MEN：你也觉得自己的路被截断了……
+A-MEN：[b]那就把这座桥，当成你曾经来过这里的证明[/b]。
+
+	\"\"\")
+	await text_box.结束
+	await get_tree().create_timer(1).timeout
+	存档.存储_剧情进度(4)
+	谢幕()
+
+func 谢幕():
+	var main:Control = preload(\"res://Scene/主页/主页.tscn\").instantiate()
+	main.visible=false
+	get_tree().root.add_child(main)
+	var thanks = preload(\"res://Scene/主页/鸣谢2.tscn\").instantiate()
+	var a=CanvasLayer.new()
+	a.add_child(thanks)
+	a.layer=10
+	get_tree().root.add_child(a)
+	await get_tree().create_timer(1.2).timeout
+	main.visible=true
+	queue_free()
+	
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32l6c"]
+size = Vector2(822, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dpgy5"]
+size = Vector2(22, 480)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4kfnh"]
+content_margin_left = 32.0
+bg_color = Color(0.21176471, 0.2627451, 0.37254903, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.38039216, 0.50980395, 0.78039217, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c0y6x"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_dpgy5")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -339.0
+offset_top = -317.00003
+offset_right = 1581.0
+offset_bottom = 763.0
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("1_dpgy5")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -451.0
+offset_top = -377.0
+offset_right = 459.0
+offset_bottom = 145.0
+color = Color(0.14901961, 0.16078432, 0.18039216, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(44, 78)
+shape = SubResource("RectangleShape2D_32l6c")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-340, -146)
+shape = SubResource("RectangleShape2D_dpgy5")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(428, -153)
+shape = SubResource("RectangleShape2D_dpgy5")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="石头人" parent="Node2D" instance=ExtResource("3_43t24")]
+position = Vector2(285, -24)
+
+[node name="石头人2" parent="Node2D" instance=ExtResource("3_43t24")]
+position = Vector2(-160, -17)
+
+[node name="蝙蝠" parent="Node2D" instance=ExtResource("4_m1r2l")]
+position = Vector2(-202, -118)
+
+[node name="蝙蝠2" parent="Node2D" instance=ExtResource("4_m1r2l")]
+position = Vector2(152, -97)
+
+[node name="Entity_2" parent="." instance=ExtResource("3_32l6c")]
+
+[node name="Node2D2" type="Node2D" parent="."]
+visible = false
+
+[node name="石头人" parent="Node2D2" instance=ExtResource("3_43t24")]
+position = Vector2(352, 1)
+
+[node name="石头人2" parent="Node2D2" instance=ExtResource("3_43t24")]
+position = Vector2(-258, 11)
+
+[node name="石头人4" parent="Node2D2" instance=ExtResource("3_43t24")]
+position = Vector2(209, 5)
+
+[node name="石头人5" parent="Node2D2" instance=ExtResource("3_43t24")]
+position = Vector2(-140, -3)
+
+[node name="蝙蝠" parent="Node2D2" instance=ExtResource("4_m1r2l")]
+position = Vector2(-283, 35)
+
+[node name="蝙蝠2" parent="Node2D2" instance=ExtResource("4_m1r2l")]
+position = Vector2(-202, -118)
+
+[node name="蝙蝠3" parent="Node2D2" instance=ExtResource("4_m1r2l")]
+position = Vector2(197, -124)
+
+[node name="蝙蝠4" parent="Node2D2" instance=ExtResource("4_m1r2l")]
+position = Vector2(285, 22)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="特效_1" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/特效_1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2791568, 0.30214754, 0.31670618, 0.8039216)
+
+[node name="DialogueLabel" parent="CanvasLayer/特效_1" instance=ExtResource("6_wi2d2")]
+layout_mode = 1
+anchors_preset = 15
+anchor_bottom = 1.0
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+seconds_per_step = 0.1
+seconds_per_pause_step = 0.1
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" parent="CanvasLayer/Control" instance=ExtResource("7_c0y6x")]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -137.0
+offset_top = -159.0
+offset_right = 107.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel2" parent="CanvasLayer/Control" instance=ExtResource("7_c0y6x")]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -375.0
+offset_top = -97.0
+offset_right = -98.0
+offset_bottom = 106.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel3" parent="CanvasLayer/Control" instance=ExtResource("7_c0y6x")]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -9.0
+offset_top = -30.0
+offset_right = 325.0
+offset_bottom = 186.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -273.25
+offset_top = -38.75
+offset_right = 273.25
+offset_bottom = 38.75
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/caret_width = 4
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_4kfnh")
+theme_override_styles/focus = SubResource("StyleBoxFlat_c0y6x")
+placeholder_text = "请输入......"
+caret_blink = true
+caret_force_displayed = true
+
+[node name="DialogueLabel" parent="CanvasLayer/Control/LineEdit" instance=ExtResource("8_4kfnh")]
+layout_mode = 1
+anchors_preset = 0
+anchor_right = 0.0
+offset_left = 29.25
+offset_top = 12.75
+offset_right = 531.25
+offset_bottom = 62.75
+grow_horizontal = 1
+theme_override_font_sizes/normal_font_size = 32
+vertical_alignment = 1
+seconds_per_step = 0.2
+
+[node name="TextBox" parent="." instance=ExtResource("1_tvv5l")]
+visible = false

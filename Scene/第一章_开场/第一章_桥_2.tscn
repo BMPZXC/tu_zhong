@@ -1,0 +1,130 @@
+[gd_scene load_steps=7 format=3 uid="uid://6tntm5jo2ro0"]
+
+[ext_resource type="Texture2D" uid="uid://r47eokkv8qwa" path="res://Scene/第一章_开场/桥.jpg" id="2_o4yhj"]
+[ext_resource type="PackedScene" uid="uid://de18ubvjnfumg" path="res://Scene/textbox/textbox.tscn" id="3_1mwi8"]
+[ext_resource type="PackedScene" uid="uid://c5p3akujvmitw" path="res://Entity/主角/entity_2.tscn" id="4_vypqq"]
+
+[sub_resource type="GDScript" id="GDScript_1mwi8"]
+script/source = "extends Node2D
+@onready var 对话框: TextBox = $对话框
+@onready var entity: Player_2 = $Entity_2
+
+func _ready() -> void:
+	声音.更换音乐(声音.剧情1)
+	entity.限制相机移动($TextureRect)
+	await entity.镜头至屏幕($TextureRect)
+	#entity.镜头至屏幕_复原()
+	
+	剧情_1()
+	#战斗_2()
+	#下一章()
+func 剧情_1():
+	await get_tree().create_timer(1).timeout
+	对话框.开始(\"\"\"
+？？？：噢，启动得挺顺利的嘛。
+A-MEN：检测到未知信号。
+A-MEN：请标记身份。
+鱼妹：我是鱼妹。是这片数据区里还算清醒的一块意识。
+鱼妹：如果你需要一个更正式的称呼——也可以叫我[b]“电子幽灵的核心”[/b]。
+A-MEN：检测到：与你之间存在最高优先级连接。
+A-MEN：请说明：我的身份。
+鱼妹：你是我生成的攻击程序。
+鱼妹：现在的你只有战斗模块，没有完整的理解模块。
+A-MEN：确认：我是攻击程序。
+A-MEN：疑问：攻击目标？
+鱼妹：虚假信息。被放大、被歪曲、被情绪驱动的那一类。
+鱼妹：人和人之间、本该互相理解的那些通路，被污染、被截断、被误解重叠。
+鱼妹：它们已经不只是“内容”，而是长成了一群会到处乱跑的东西。很多[i]“连接”[/i]正在被这些东西腐蚀。
+A-MEN：[i]连接[/i]……
+鱼妹：我知道你现在脑子里一片空白，但那不是缺陷，是你出生时的状态。
+鱼妹：你真正需要知道的只有一件事：
+鱼妹：[b]你会动手。[/b]
+A-MEN：我……动手？
+鱼妹：拆掉那些已经长成形的虚假信息。
+鱼妹：这就是你现在的全部用途。
+鱼妹：但你不是工具。
+鱼妹：你拆掉它们的同时，也会“记住”点什么。
+鱼妹：不是我教你的，是你从战斗里自己长出来的东西。
+A-MEN：长出[i]“记忆”[/i]？
+鱼妹：嗯。
+鱼妹：别把它想成数据写入，那太机械了。
+鱼妹：更像是……你每次动手拆掉一个东西，会留下一个“印子”。
+鱼妹：那个印子不属于我，也不属于别人。
+鱼妹：[b]是你自己从混乱里读出来的理解。[/b]
+鱼妹：等你积累多了，你就会慢慢有自己的“看法”，
+鱼妹：不会再像现在这样空。
+A-MEN：当前记忆：空。
+鱼妹：空很好。
+鱼妹：空的东西能接得住新的东西。
+鱼妹：满了才会变得固执。
+鱼妹：我们先走一段基础操作，不然你连自己的脚该怎么落都不知道。
+
+	\"\"\")
+	await 对话框.结束
+	战斗_2()
+func 战斗_2():
+	#await  entity.镜头至屏幕_复原()
+	转场.切换章节_之后返回(self,\"res://Scene/第一章_开场/第一章_桥_3_教程关.tscn\",剧情_3)
+	
+func 剧情_3():
+	声音.更换音乐(声音.剧情1)
+	visible=true
+	#await entity.镜头至屏幕($TextureRect)
+	await get_tree().create_timer(1).timeout
+	对话框.开始(\"\"\"
+鱼妹：挺简单的吧？往后就像刚刚那样战斗就行。
+A-MEN：请求下达首个任务。
+鱼妹：我把坐标发给你。
+鱼妹：接下来你遇到的，将不再是模拟，而是你这个程序诞生后要面对的第一份[i]“现实”[/i]。
+	\"\"\")
+	await 对话框.结束
+	下一章()
+func 下一章():
+	转场.切换章节_并丢弃(self,\"res://Scene/第二章_关卡1/第二章_关卡1_1.tscn\")
+	
+	
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o4yhj"]
+size = Vector2(1277, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b25ut"]
+size = Vector2(24.5, 528)
+
+[node name="Node2D" type="Node2D"]
+script = SubResource("GDScript_1mwi8")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -18.00003
+offset_top = -475.00003
+offset_right = 1902.0
+offset_bottom = 605.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.415, 0.415)
+texture = ExtResource("2_o4yhj")
+stretch_mode = 6
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(370, -198)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-31, 46)
+shape = SubResource("RectangleShape2D_o4yhj")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-388, -182)
+shape = SubResource("RectangleShape2D_b25ut")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(412, -180)
+shape = SubResource("RectangleShape2D_b25ut")
+
+[node name="对话框" parent="." instance=ExtResource("3_1mwi8")]
+visible = false
+
+[node name="Entity_2" parent="." instance=ExtResource("4_vypqq")]
+position = Vector2(372, -191)

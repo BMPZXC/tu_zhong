@@ -1,0 +1,372 @@
+[gd_scene load_steps=15 format=3 uid="uid://bwfqegaly2enf"]
+
+[ext_resource type="Theme" uid="uid://dx3qanifd1whh" path="res://Scene/主页/主体.tres" id="1_gftoo"]
+[ext_resource type="Texture2D" uid="uid://ce7pper7gx656" path="res://Scene/主页/警告.png" id="2_gftoo"]
+[ext_resource type="Texture2D" uid="uid://r47eokkv8qwa" path="res://Scene/第一章_开场/桥.jpg" id="2_hrhcw"]
+[ext_resource type="Texture2D" uid="uid://2h8aef7gtn3s" path="res://Scene/主页/纳西妲.png" id="3_saf3g"]
+[ext_resource type="Texture2D" uid="uid://mivckwf18iq0" path="res://Scene/主页/照相.png" id="4_gftoo"]
+[ext_resource type="Texture2D" uid="uid://dv1filgh2ppn8" path="res://Scene/主页/叉3.png" id="6_8fchc"]
+[ext_resource type="Texture2D" uid="uid://bldy2qws8vla8" path="res://Scene/主页/叉2.png" id="7_pcgok"]
+[ext_resource type="Texture2D" uid="uid://dk3nmtfiinx6v" path="res://Scene/主页/叉.png" id="8_575qv"]
+
+[sub_resource type="GDScript" id="GDScript_gftoo"]
+script/source = "extends Control
+
+func _on_start_button_pressed() -> void:
+	转场.切换章节_并丢弃(self,\"res://Scene/主页/章节.tscn\")
+
+func _on_texture_rect_3_pressed() -> void:
+	get_tree().quit()
+
+var 鸣谢=preload(\"res://Scene/主页/鸣谢2.tscn\")
+func _on_button_5_pressed() -> void:
+	var a=鸣谢.instantiate()
+	get_tree().root.add_child(a)
+
+
+func _on_setting_button_pressed() -> void:
+	设置.play(\"入场\")
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q6vi2"]
+
+[sub_resource type="GDScript" id="GDScript_pvfdj"]
+script/source = "extends Control
+
+func _ready() -> void:
+	if 存档.读取_剧情进度()>=4:
+		visible=false
+"
+
+[sub_resource type="GDScript" id="GDScript_saf3g"]
+script/source = "extends Label
+
+func _ready() -> void:
+	if 存档.读取_剧情进度()>=4:
+		text=\"\"\"
+Status:ONLINE
+User:YOU
+Network:CONNECTED
+Ghost Module:confirmed
+		\"\"\"
+"
+
+[sub_resource type="Shader" id="Shader_gftoo"]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D displace : source_color;
+uniform float dispAmt      : hint_range(0.0, 0.1);
+uniform float abberationAmtX : hint_range(0.0, 0.1);
+uniform float abberationAmtY : hint_range(0.0, 0.1);
+uniform float dispsize       : hint_range(0.1, 2.0);
+uniform float maxAlpha       : hint_range(0.9, 1.0);
+
+// 把偏移和色差全部在顶点阶段算好，变成 3 组 UV
+varying vec2 uv_r;
+varying vec2 uv_g;
+varying vec2 uv_b;
+
+void vertex() {
+    vec4 disp = texture(displace, UV * dispsize);   // 采样扰动图
+    vec2 offset = disp.xy * dispAmt;                // 位移量
+
+    uv_r = UV - offset - vec2(abberationAmtX, abberationAmtY);
+    uv_g = UV - offset;                             // 绿色无额外色差
+    uv_b = UV - offset + vec2(abberationAmtX, abberationAmtY);
+}
+
+void fragment() {
+    float r = texture(TEXTURE, uv_r).r;
+    float g = texture(TEXTURE, uv_g).g;
+    float b = texture(TEXTURE, uv_b).b;
+    float a = texture(TEXTURE, UV).a * maxAlpha;    // 原 alpha 再缩放
+
+    COLOR = vec4(r, g, b, a);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hrhcw"]
+shader = SubResource("Shader_gftoo")
+shader_parameter/displace = ExtResource("2_hrhcw")
+shader_parameter/dispAmt = 0.0470000022325
+shader_parameter/abberationAmtX = 0.04400000209
+shader_parameter/abberationAmtY = 0.0590000028025
+shader_parameter/dispsize = 0.65200002771012
+shader_parameter/maxAlpha = 0.95299997867564
+
+[node name="Control2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_gftoo")
+script = SubResource("GDScript_gftoo")
+
+[node name="BackGround" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="BackGround"]
+material = SubResource("ShaderMaterial_q6vi2")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.5758706, 0.30117354, 0.66743624, 1)
+
+[node name="WarnningIcons" type="Control" parent="BackGround"]
+modulate = Color(0.7607843, 0.2784314, 0.28235295, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_pvfdj")
+
+[node name="TextureRect" type="TextureRect" parent="BackGround/WarnningIcons"]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 84.0
+offset_right = 228.0
+offset_bottom = 218.0
+texture = ExtResource("2_gftoo")
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="BackGround/WarnningIcons"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 133.0
+offset_top = 60.0
+offset_right = 222.0
+offset_bottom = 137.0
+grow_horizontal = 2
+texture = ExtResource("2_gftoo")
+stretch_mode = 5
+
+[node name="TextureRect3" type="TextureRect" parent="BackGround/WarnningIcons"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -235.0
+offset_top = -202.0
+offset_right = -51.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("2_gftoo")
+stretch_mode = 5
+
+[node name="TextureRect4" type="TextureRect" parent="BackGround/WarnningIcons"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -115.0
+offset_top = 9.0
+offset_right = -58.0
+offset_bottom = 62.0
+grow_horizontal = 2
+texture = ExtResource("2_gftoo")
+stretch_mode = 5
+
+[node name="Label" type="RichTextLabel" parent="BackGround/WarnningIcons"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 68.0
+offset_right = 321.0
+offset_bottom = 84.0
+bbcode_enabled = true
+text = "[b][i]system error[/i][/b]"
+fit_content = true
+autowrap_mode = 0
+
+[node name="TextIcon" type="Control" parent="BackGround"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="BackGround/TextIcon"]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -184.54001
+offset_right = 256.0
+offset_bottom = -120.53998
+grow_vertical = 0
+theme_override_font_sizes/font_size = 64
+text = "--------"
+
+[node name="TextureRect" type="TextureRect" parent="BackGround/TextIcon/Label"]
+modulate = Color(0.9739311, 0.89459085, 1, 1)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 121.0
+offset_top = -173.46002
+offset_right = 366.0
+offset_bottom = 41.0
+grow_vertical = 0
+texture = ExtResource("3_saf3g")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label2" type="Label" parent="BackGround/TextIcon"]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -184.54001
+offset_bottom = -120.53998
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 64
+text = "--------"
+horizontal_alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="BackGround/TextIcon/Label2"]
+texture_filter = 2
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -133.46002
+offset_right = 57.0
+offset_bottom = -57.0
+grow_vertical = 0
+texture = ExtResource("4_gftoo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label3" type="Label" parent="BackGround/TextIcon"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -186.0
+offset_top = -99.0
+offset_right = -26.0
+offset_bottom = -26.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.023529412, 0.02745098, 0.07450981, 1)
+text = "Status:ONLINE
+User:A-MEN
+Network:???
+Ghost Module:RUNNING"
+vertical_alignment = 2
+script = SubResource("GDScript_saf3g")
+
+[node name="Label4" type="Label" parent="BackGround/TextIcon"]
+material = SubResource("ShaderMaterial_hrhcw")
+use_parent_material = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = -62.0
+offset_right = 253.0
+offset_bottom = -23.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.7490196, 0.26666668, 0.37254903, 1)
+text = "Error code:0xc0000225
+Bridge endpoint not found..."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BackGround"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -209.0
+offset_bottom = 72.0
+grow_horizontal = 0
+
+[node name="TextureButton" type="TextureButton" parent="BackGround/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("6_8fchc")
+stretch_mode = 5
+
+[node name="TextureButton2" type="TextureButton" parent="BackGround/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("7_pcgok")
+stretch_mode = 5
+
+[node name="TextureButton3" type="TextureButton" parent="BackGround/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("8_575qv")
+stretch_mode = 5
+
+[node name="Button" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -68.0
+offset_top = -86.0
+offset_right = 68.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartButton" type="Button" parent="Button"]
+layout_mode = 2
+text = "Start"
+flat = true
+
+[node name="ContinueButton" type="Button" parent="Button"]
+visible = false
+layout_mode = 2
+text = "Continue"
+flat = true
+
+[node name="SettingButton" type="Button" parent="Button"]
+layout_mode = 2
+text = "Settings"
+flat = true
+
+[node name="CreditsButton" type="Button" parent="Button"]
+layout_mode = 2
+text = "Credits"
+flat = true
+
+[node name="Shutdown" type="Button" parent="Button"]
+layout_mode = 2
+text = "Shutdown"
+flat = true
+
+[connection signal="pressed" from="BackGround/HBoxContainer/TextureButton3" to="." method="_on_texture_rect_3_pressed"]
+[connection signal="pressed" from="Button/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="Button/SettingButton" to="." method="_on_setting_button_pressed"]
+[connection signal="pressed" from="Button/CreditsButton" to="." method="_on_button_5_pressed"]
+[connection signal="pressed" from="Button/Shutdown" to="." method="_on_texture_rect_3_pressed"]

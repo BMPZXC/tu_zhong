@@ -1,0 +1,78 @@
+[gd_scene load_steps=6 format=3 uid="uid://hhcjdrag0egi"]
+
+[ext_resource type="FontFile" uid="uid://bxei370kt6pd1" path="res://Scene/主页/AaLingQiJu-LuoZiWuHui-2.ttf" id="1_882h6"]
+[ext_resource type="StyleBox" uid="uid://xc5qgl5vfnta" path="res://Scene/主页/书.tres" id="1_n7sxt"]
+[ext_resource type="StyleBox" uid="uid://couqqt8e8mhcn" path="res://Scene/主页/书_锁定.tres" id="1_vt7y2"]
+[ext_resource type="StyleBox" uid="uid://l3rf5g27xdgk" path="res://Scene/主页/书_点击.tres" id="2_vt7y2"]
+
+[sub_resource type="GDScript" id="GDScript_n7sxt"]
+script/source = "@tool
+extends Control
+@onready var label: Label = $Label
+@export var 根:Control
+@export var 需要进度:int=0
+@export var 书名:String:
+	set(a):
+		书名=a
+		if label:
+			label.text=a
+@export var 场景:String   
+func _ready() -> void:
+	label.text=书名
+	if 存档.读取_剧情进度()<需要进度:
+		button.disabled=true
+@onready var button: Button = $Button
+
+func _on_button_pressed() -> void:
+	button.release_focus()
+	转场.切换章节_并丢弃(根,场景)
+
+
+func _on_button_mouse_entered() -> void:
+	z_index=1
+
+
+func _on_button_mouse_exited() -> void:
+	z_index=0
+	button.release_focus()
+"
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 3
+anchor_right = 0.108
+anchor_bottom = 1.0
+offset_right = -31.576004
+grow_vertical = 2
+script = SubResource("GDScript_n7sxt")
+"场景" = null
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = ExtResource("1_n7sxt")
+theme_override_styles/pressed = ExtResource("1_n7sxt")
+theme_override_styles/hover = ExtResource("2_vt7y2")
+theme_override_styles/disabled = ExtResource("1_vt7y2")
+theme_override_styles/focus = ExtResource("2_vt7y2")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_882h6")
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+vertical_alignment = 1
+paragraph_separator = ""
+
+[connection signal="mouse_entered" from="Button" to="." method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_button_mouse_exited"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -1,0 +1,183 @@
+[gd_scene load_steps=6 format=3 uid="uid://dt628chcakgfv"]
+
+[ext_resource type="Texture2D" uid="uid://dk3nmtfiinx6v" path="res://Scene/主页/叉.png" id="1_exii7"]
+
+[sub_resource type="GDScript" id="GDScript_ug7gi"]
+script/source = "extends Control
+
+@onready var sub_viewport: SubViewport = $\"../SubViewport\"
+@onready var texture_rect: TextureRect = $TextureRect
+func _ready() -> void:
+	var a1=(DisplayServer.window_get_size()/sub_viewport.size).length()
+	sub_viewport.size= a1*sub_viewport.size*2
+	var a=texture_rect.material
+	a.set(\"shader_parameter/offset_y_pixels\",(texture_rect.size-get_viewport().get_visible_rect().size).y)
+	await  入场()
+	入场结束=true
+	
+	var b= get_tree().create_tween()
+	b.finished.connect(func ():
+		入场结束=false
+		结束())
+	b.tween_property(a,\"shader_parameter/offset_y_percent\",1,24)
+
+var 入场结束=false
+func 入场():
+	var a= get_tree().create_tween()
+	var b=get_viewport().get_visible_rect().size
+	position+=Vector2(0,size.y+b.y)
+	modulate=Color(0.0, 0.0, 0.0, 0.0)
+	a.set_parallel(true)
+	a.tween_property(self,\"modulate\",Color.ALICE_BLUE,1)
+	a.tween_property(self,\"position\",Vector2.ZERO,1)
+	
+	await a.finished
+
+
+@onready var control:Node = $\"..\"
+
+func _on_texture_button_pressed() -> void:
+	pass # Replace with function body.
+	if 入场结束:
+		入场结束=false
+		结束()
+func 结束():
+	var a= get_tree().create_tween()
+	a.tween_property(self,\"modulate\",Color(0.0, 0.0, 0.0, 0.0),1)
+	await a.finished
+	control.queue_free()
+
+
+	
+"
+
+[sub_resource type="Shader" id="Shader_exii7"]
+code = "shader_type canvas_item;
+render_mode unshaded;
+
+uniform float offset_y_percent : hint_range(-1.0, 1.0, 0.01) = 0.0;   // 百分比
+uniform float offset_y_pixels   = 0.0; // 像素
+
+void vertex() {
+    // 1. 像素偏移 → 转成 UV 单位
+    UV += vec2(0.0, offset_y_pixels * TEXTURE_PIXEL_SIZE.y);
+    // 2. 再叠百分比偏移
+    UV += vec2(0.0, offset_y_percent);
+	//UV.y+=
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_exii7"]
+resource_local_to_scene = true
+shader = SubResource("Shader_exii7")
+shader_parameter/offset_y_percent = -1.0
+shader_parameter/offset_y_pixels = 100.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_exii7"]
+viewport_path = NodePath("SubViewport")
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_ug7gi")
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+use_parent_material = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.039724726, 0.094195046, 0.20808762, 1)
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+texture_filter = 2
+material = SubResource("ShaderMaterial_exii7")
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -461.0
+offset_right = 461.0
+offset_bottom = 620.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+texture = SubResource("ViewportTexture_exii7")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureButton" type="TextureButton" parent="Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -82.0
+offset_bottom = 76.0
+grow_horizontal = 0
+texture_normal = ExtResource("1_exii7")
+stretch_mode = 5
+
+[node name="SubViewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 3
+size = Vector2i(900, 620)
+size_2d_override = Vector2i(900, 620)
+size_2d_override_stretch = true
+render_target_update_mode = 1
+
+[node name="Label" type="Label" parent="SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.52156866, 0.93333334, 1, 1)
+text = "
+（排名不分先后）
+剧情：兔兔(qq:2362588383)
+程序&美术：星尘(qq:2298803971)
+
+Credits / Acknowledgements / 素材鸣谢
+BGM:
+\"Warrior Defense Fighting Music\" by MFCC (Pixabay)
+\"Fighting Battle Warrior Drums\" by Tatamusic (Pixabay)
+\"Video Game Boss Fight\" by IHateTuesdays (Pixabay)
+\"Sweet Life (Luxury Chill)\" by AlexGrohl (Pixabay)
+ \"Groovy Vibe\" by Bransboynd (Pixabay)
+ \"Cascade Breathe (Future Garage)\" by NverAevamusic (Pixabay)
+ \"Embrace\" by Evgeny_Bardyuzha (Pixabay)
+
+
+Sound Effects:
+ \"Keyboard Typing\" by DRAGON-STUDIO (Pixabay)
+
+
+Game Assets:
+Player Character Sprite by Art-Man-Oil (from “Bots and Bolts” Asset Pack, itch.io)
+ Enemy Sprites by MonoPixelArt (from \"Golems Pack\" Asset Pack, itch.io)
+Enemy Sprites by WilliamQM (from \"Dark Enemies Pack\" Asset Pack, itch.io)
+
+
+In Game Text:
+Chinese Font by Source Han Sans Medium (Adobe & Google)
+"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="Control/TextureButton" to="Control" method="_on_texture_button_pressed"]

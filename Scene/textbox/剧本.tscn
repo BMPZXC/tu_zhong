@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=3 uid="uid://c70y4sq4ogtqt"]
+
+[ext_resource type="Texture2D" uid="uid://bsakgf6u78sd4" path="res://Scene/textbox/叉.png" id="2_0fd1n"]
+
+[sub_resource type="GDScript" id="GDScript_0fd1n"]
+script/source = "extends Control
+var hh=preload(\"res://Scene/textbox/剧本_行.tscn\")
+@export  var v_box_container: VBoxContainer
+func 初始(h:Array[String]):
+	for i in h.size():
+		var a=hh.instantiate()
+		v_box_container.add_child(a)
+		a.初始(h[i])
+
+
+signal 关闭
+func _on_texture_button_pressed() -> void:
+	visible=false
+	if v_box_container.get_child_count()>0:
+		for n in v_box_container.get_children():
+			n.queue_free()
+	关闭.emit()
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_seq1i"]
+bg_color = Color(0.20950082, 0.22642587, 0.24881959, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="Control" type="Control" node_paths=PackedStringArray("v_box_container")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_0fd1n")
+v_box_container = NodePath("MarginContainer/Panel/剧本/ScrollContainer/VBoxContainer")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 1
+color = Color(0.43201151, 0.4829774, 0.5339433, 0.7882353)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -306.0
+offset_right = 289.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="Panel" type="Panel" parent="MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_seq1i")
+
+[node name="剧本" type="MarginContainer" parent="MarginContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 20
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Panel/剧本"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/剧本/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureButton" type="TextureButton" parent="MarginContainer/Panel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -18.9375
+offset_top = -17.75
+offset_right = 21.0625
+offset_bottom = 22.25
+grow_horizontal = 0
+texture_normal = ExtResource("2_0fd1n")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="focus_entered" from="ColorRect" to="." method="_on_texture_button_pressed"]
+[connection signal="pressed" from="MarginContainer/Panel/TextureButton" to="." method="_on_texture_button_pressed"]

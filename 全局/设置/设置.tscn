@@ -1,0 +1,263 @@
+[gd_scene load_steps=8 format=3 uid="uid://c1ly5p77ls7ly"]
+
+[ext_resource type="Curve" uid="uid://dvtj8v4fm0af6" path="res://全局/设置/音量_数值映射.tres" id="1_ggnbj"]
+[ext_resource type="Script" uid="uid://dmulmqb8b4pyv" path="res://全局/设置/设置.tres.gd" id="1_ij8oh"]
+[ext_resource type="Texture2D" uid="uid://cu18f6o4k4107" path="res://全局/设置/设置-copy.png" id="2_1ljkg"]
+
+[sub_resource type="Animation" id="Animation_234iw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("设置/CanvasLayer/CenterContainer/Panel:custom_minimum_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1500, 200)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("设置/CanvasLayer/CenterContainer/Panel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("设置/CanvasLayer/ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.43223056, 0.46054554, 0.47963405, 0.7764706)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("设置/CanvasLayer:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_sqd5e"]
+resource_name = "入场"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("设置/CanvasLayer/CenterContainer/Panel:custom_minimum_size")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.06666667, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1500, 0.1), Vector2(1500, 200)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("设置/CanvasLayer/CenterContainer/Panel:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.16666667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.21394914), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("设置/CanvasLayer/ColorRect:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.033333335, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.43137255, 0.45882353, 0.47843137, 0), Color(0.23046657, 0.26493278, 0.28955156, 0.7764706)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("设置/CanvasLayer:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.033333335, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_234iw"]
+_data = {
+&"RESET": SubResource("Animation_234iw"),
+&"入场": SubResource("Animation_sqd5e")
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0wlyb"]
+bg_color = Color(0.25482777, 0.5174707, 0.90053093, 1)
+
+[node name="设置" type="AnimationPlayer" groups=["全局脚本"]]
+libraries = {
+&"": SubResource("AnimationLibrary_234iw")
+}
+script = ExtResource("1_ij8oh")
+curve = ExtResource("1_ggnbj")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 4
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 1
+color = Color(0.43137255, 0.45882353, 0.47843137, 0)
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -750.0
+offset_top = -100.0
+offset_right = 750.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="CanvasLayer/CenterContainer"]
+modulate = Color(1, 1, 1, 0)
+clip_children = 2
+custom_minimum_size = Vector2(1500, 0.1000061)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0wlyb")
+
+[node name="Control" type="VBoxContainer" parent="CanvasLayer/CenterContainer/Panel"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.44500002
+anchor_right = 0.5
+anchor_bottom = 0.44500002
+offset_left = -200.0
+offset_top = -89.00001
+offset_right = 200.0
+offset_bottom = 110.99999
+
+[node name="Control4" type="Control" parent="CanvasLayer/CenterContainer/Panel/Control"]
+custom_minimum_size = Vector2(0, 24.115)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/CenterContainer/Panel/Control"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "音效"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/CenterContainer/Panel/Control/Label"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Label2" type="Label" parent="CanvasLayer/CenterContainer/Panel/Control"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "背景音乐"
+
+[node name="HSlider" type="HSlider" parent="CanvasLayer/CenterContainer/Panel/Control/Label2"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -252.0
+offset_top = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Control2" type="Control" parent="CanvasLayer/CenterContainer/Panel/Control"]
+custom_minimum_size = Vector2(0, 24.115)
+layout_mode = 2
+
+[node name="Control" type="Control" parent="CanvasLayer/CenterContainer/Panel/Control"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="CanvasLayer/CenterContainer/Panel/Control/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -82.5
+offset_top = -18.0
+offset_right = 82.5
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+text = "返回主页"
+
+[node name="Label3" type="Label" parent="CanvasLayer/CenterContainer/Panel/Control"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "点击空白处关闭"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+layer = 10
+visible = false
+
+[node name="TextureRect" type="TextureButton" parent="CanvasLayer2"]
+offset_left = 21.0
+offset_top = 10.0
+offset_right = 72.0
+offset_bottom = 58.0
+texture_normal = ExtResource("2_1ljkg")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="focus_entered" from="CanvasLayer/ColorRect" to="." method="_on_color_rect_focus_entered"]
+[connection signal="drag_ended" from="CanvasLayer/CenterContainer/Panel/Control/Label/HSlider" to="." method="_on_h_slider_drag_ended"]
+[connection signal="value_changed" from="CanvasLayer/CenterContainer/Panel/Control/Label/HSlider" to="." method="_on_h_slider_value_changed"]
+[connection signal="drag_ended" from="CanvasLayer/CenterContainer/Panel/Control/Label2/HSlider" to="." method="_on_h_slider_drag_ended_2"]
+[connection signal="value_changed" from="CanvasLayer/CenterContainer/Panel/Control/Label2/HSlider" to="." method="_on_h_slider_value_changed_2"]
+[connection signal="pressed" from="CanvasLayer/CenterContainer/Panel/Control/Control/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="CanvasLayer2/TextureRect" to="." method="_on_texture_rect_pressed"]

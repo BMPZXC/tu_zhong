@@ -1,0 +1,153 @@
+[gd_scene load_steps=4 format=3 uid="uid://b66ne1rhsywt5"]
+
+[ext_resource type="PackedScene" uid="uid://hhcjdrag0egi" path="res://Scene/主页/书.tscn" id="1_v3q4b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ooq55"]
+bg_color = Color(0.28450045, 0.31575948, 0.35743815, 1)
+border_width_bottom = 4
+border_color = Color(0.15456596, 0.18438776, 0.22166497, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v3q4b"]
+bg_color = Color(0.28450045, 0.31575948, 0.35743815, 1)
+border_width_top = 4
+border_color = Color(0.15456596, 0.18438776, 0.22166497, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.13941787, 0.14546049, 0.16056699, 1)
+
+[node name="Control" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Panel2" type="Panel" parent="Control"]
+custom_minimum_size = Vector2(0, 21.45)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ooq55")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Control" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control2" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control3" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control4" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control5" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control6" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control7" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"书名" = "雾还未散的地方"
+"场景" = "res://Scene/第一章_开场/第一章_桥.tscn"
+
+[node name="Control8" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 1
+"书名" = "一只不属于我的手"
+"场景" = "res://Scene/第二章_关卡1/第二章_关卡1_1.tscn"
+
+[node name="Control9" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 2
+"书名" = "无法抵达的彼岸"
+"场景" = "res://Scene/第三章_关卡2/第三章_关卡2.tscn"
+
+[node name="Control10" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 3
+"书名" = "桥的另一端"
+"场景" = "res://Scene/第四章_终章/第四章_终章.tscn"
+
+[node name="Control11" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control12" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control13" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control14" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control15" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control16" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Panel" type="Panel" parent="Control"]
+custom_minimum_size = Vector2(0, 21.45)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v3q4b")

@@ -10,7 +10,8 @@ script/source = "extends Control
 @onready var entity: Player_2 = $Entity_2
 @onready var text_box: TextBox = $TextBox
 func _ready() -> void:
-	存档.存储_剧情进度(2)
+	设置.保存成功(存档.存储_剧情进度(2))
+	
 	声音.更换音乐(声音.剧情3)
 	entity.限制相机移动($TextureRect)
 	await entity.镜头至屏幕($TextureRect)

@@ -1,5 +1,11 @@
 extends AnimationPlayer
 
+@onready var animation_player: AnimationPlayer = $CanvasLayer2/Panel/AnimationPlayer
+
+func 保存成功(a:bool):
+	if a==true:
+		animation_player.play("保存")
+
 func _on_color_rect_focus_entered() -> void:
 	play_backwards("入场")
 

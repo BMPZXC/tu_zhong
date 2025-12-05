@@ -13,7 +13,7 @@ script/source = "extends Control
 @onready var 玩家: Player_2 = $\"Entity_2\"
 
 func _ready() -> void:
-	存档.存储_剧情进度(1)
+	设置.保存成功(存档.存储_剧情进度(1))
 	声音.更换音乐(声音.剧情2)
 	玩家.限制相机移动($TextureRect)
 	await 玩家.镜头至屏幕($TextureRect)

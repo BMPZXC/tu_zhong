@@ -120,7 +120,10 @@ func _physics_process(delta: float) -> void:
 				空中跳=false
 				velocity.y=-200
 		else :
-			velocity.y+=(0-velocity.x)*delta*7
+			if velocity.y<0:
+				velocity.y+=(0-velocity.x)*delta*7
+			else :
+				velocity.y=0
 			空中只能攻击一次=true
 			空中跳=true
 			if Input.is_action_just_pressed("跳"):

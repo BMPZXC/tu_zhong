@@ -15,7 +15,7 @@ script/source = "extends Control
 @onready var entity: Player_2 = $Entity_2
 
 func _ready() -> void:
-	存档.存储_剧情进度(3)
+	设置.保存成功(存档.存储_剧情进度(3))
 	声音.更换音乐(声音.剧情4)
 	
 	entity.限制相机移动($TextureRect)
@@ -416,7 +416,7 @@ A-MEN：[b]那就把这座桥，当成你曾经来过这里的证明[/b]。
 	\"\"\")
 	await text_box.结束
 	await get_tree().create_timer(1).timeout
-	存档.存储_剧情进度(4)
+	设置.保存成功(存档.存储_剧情进度(4))
 	谢幕()
 
 func 谢幕():

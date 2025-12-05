@@ -10,11 +10,11 @@ config_version=5
 
 [application]
 
-config/name="GameJam"
+config/name="途中"
 config/version="1.0"
 run/main_scene="uid://bwfqegaly2enf"
 config/features=PackedStringArray("4.5", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="uid://ky2lp75kuen2"
 
 [autoload]
 

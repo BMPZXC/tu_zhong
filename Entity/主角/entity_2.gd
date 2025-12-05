@@ -11,18 +11,18 @@ func 重置():
 	position=_初始位置
 	#await get_tree().physics_frame  无法处理 受击 的 击飞
 	#velocity=Vector2.ZERO
+
+#func 禁用输入(a:bool):   ##用于剧情 以及 战斗
+	#set_physics_process(!a)
+	#禁用输入=a
 	
-func 禁用输入(a:bool):   ##用于剧情 以及 战斗
-	set_physics_process(!a)
-	禁用攻击=a
-	
-func 冻结(a:bool):###用于跳转场景,但保留当前
-	禁用输入(a)
-	camera_2d.enabled=!a
+#func 冻结(a:bool):###用于跳转场景,但保留当前
+	#禁用输入=true
+	#camera_2d.enabled=!a
 
 var 初始缩放:Vector2
 func 镜头至屏幕(a:Control):##用于剧情
-	禁用输入(true)
+	禁用输入=true
 	camera_2d.enabled=true
 	var 左上=a.global_position
 	var 右下=a.scale*a.size+左上
@@ -42,7 +42,7 @@ func 镜头至屏幕_复原():
 	b.tween_property(camera_2d,"position",Vector2.ZERO,1)  
 	b.tween_property(camera_2d,"zoom",初始缩放,1)
 	await b.finished
-	禁用输入(false)
+	禁用输入=false
 	
 ####
 
@@ -78,10 +78,10 @@ func 切换职业(a:职业):
 	当前职业=a
 	鼠标左键.技能_图标=a.普攻_图标
 
-var 禁用攻击=false
+var 禁用输入=false
 @onready var 鼠标左键 = $CanvasLayer/右下/鼠标左键
 func _process(_delta: float) -> void:
-	if 锁定 or 禁用攻击:return
+	if 锁定 or 禁用输入:return
 	for i in 切:
 		if Input.is_action_just_pressed(i.切换按键):
 			切换职业(i)
@@ -106,12 +106,13 @@ func 空(_delta: float) -> void:pass
 var 空中跳=true
 var 空中只能攻击一次=true
 func _physics_process(delta: float) -> void:
+	if 禁用输入:return
 	if 模式==空:
 		var a=Input.get_axis("左","右")
 		if a*图片_方向<0:
 			scale.x=-scale.x
 			图片_方向=-图片_方向
-		velocity.x=velocity.x+(100*sign(a)-velocity.x)*delta*7
+		velocity.x+=(100*sign(a)-velocity.x)*delta*7
 
 		if not is_on_floor():
 			velocity.y+=10
@@ -119,6 +120,7 @@ func _physics_process(delta: float) -> void:
 				空中跳=false
 				velocity.y=-200
 		else :
+			velocity.y+=(0-velocity.x)*delta*7
 			空中只能攻击一次=true
 			空中跳=true
 			if Input.is_action_just_pressed("跳"):

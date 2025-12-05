@@ -27,7 +27,7 @@ func 靠近(delta: float):
 	if 差值.x*图片_方向<-1:
 		scale.x=-scale.x
 		图片_方向=-图片_方向
-	if 差值.length()>120:
+	if 差值.length()>120 and 差值.length()<300:
 		velocity=velocity+(40*差值.normalized()-velocity)*10*delta
 		animated_sprite_2d.play(\"i\")
 	else :

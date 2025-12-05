@@ -27,7 +27,7 @@ class 战斗场景:
 	var _场景_跳至:Callable
 	var _选择中=false
 	func 进入战斗():
-		_玩家.禁用输入(false)
+		_玩家.禁用输入=false
 		if not _玩家.死亡.is_connected(_战败):
 			_玩家.死亡.connect(_战败)
 		var a=_场景.duplicate()
@@ -44,7 +44,7 @@ class 战斗场景:
 			print_debug("error")
 			return
 		_选择中=true
-		_玩家.禁用输入(true)
+		_玩家.禁用输入=true
 		var a=await 战败ui.选择(_场景_使用中)
 		match a:
 			"重来":
@@ -64,10 +64,10 @@ class 战斗场景:
 				else :
 					_下一关_1()
 				return
-		_玩家.禁用输入(false)
+		_玩家.禁用输入=false
 		_选择中=false
 	func _下一关_1():
-		_玩家.禁用输入(true)
+		_玩家.禁用输入=true
 		_玩家.死亡.disconnect(_战败)
 		_下一关.call()
 			

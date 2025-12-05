@@ -33,6 +33,8 @@ func clear_nonglobal_from_root(a) -> void:
 	var root := get_tree().root
 	for child in root.get_children():
 		if child.is_in_group("全局脚本") or child==a:continue
+		for conn in child.tree_exited.get_connections():
+			child.tree_exited.disconnect(conn.callable)
 		child.queue_free() 
 	
 	

@@ -130,7 +130,7 @@ libraries = {
 script = ExtResource("1_yjrdj")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 3
+layer = 20
 
 [node name="ColorRect" type="TextureRect" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_yjrdj")

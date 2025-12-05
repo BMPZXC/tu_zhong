@@ -10,6 +10,7 @@ script/source = "extends Control
 @onready var entity: Player_2 = $Entity_2
 @onready var text_box: TextBox = $TextBox
 func _ready() -> void:
+	存档.存储_剧情进度(2)
 	声音.更换音乐(声音.剧情3)
 	entity.限制相机移动($TextureRect)
 	await entity.镜头至屏幕($TextureRect)
@@ -55,7 +56,7 @@ A-MEN：像是……被剪掉。
 小澈：但每次一讲长了，
 小澈：他们的评论就开始出现：
 小澈：“又开始那套了。”
-小澈：“赶紧跳结论吧。”
+小澈：“赶紧跳到 结论 吧!”
 小澈：“前面太啰嗦。”
 小澈：于是后来，
 小澈：我也不知道哪些部分是我“被允许说的”。
@@ -214,16 +215,22 @@ A-MEN：[i]桥[/i]不在世界里？
 	\"\"\")
 	await text_box.结束
 	特殊_4()
+@onready var color_rect: ColorRect = $ColorRect
+
 func 特殊_4():
 	#（画面开始慢慢变白或变黑）
-	print_debug(\"未做完\")
+	await  get_tree().create_timer(1).timeout
+	声音.更换音乐(声音.战斗2)
+	var a=get_tree().create_tween()
+	a.tween_property(color_rect,\"color\",Color(1.0, 1.0, 1.0),3)
+	await a.finished
 	剧情_5()
 
 func 剧情_5():
 	await  get_tree().create_timer(1).timeout
 	text_box.开始(\"\"\"
 鱼妹：准备好了吗？
-鱼妹：局不是终点，
+鱼妹：结局不是终点，
 鱼妹：是你第一次站在[i]桥[/i]的“另一头”。
 	\"\"\")
 	await text_box.结束
@@ -257,6 +264,14 @@ offset_right = 1577.0
 offset_bottom = 897.0
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("1_f5js2")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -383.0
+offset_top = -219.0
+offset_right = 470.0
+offset_bottom = 302.0
+color = Color(1, 1, 1, 0)
 
 [node name="TextBox" parent="." instance=ExtResource("1_cqpao")]
 visible = false

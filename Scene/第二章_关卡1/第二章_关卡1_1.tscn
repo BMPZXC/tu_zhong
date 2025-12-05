@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://cxmmrhsns4jlr"]
+[gd_scene load_steps=10 format=3 uid="uid://cxmmrhsns4jlr"]
 
 [ext_resource type="Texture2D" uid="uid://0s6loeor2dxv" path="res://Scene/第二章_关卡1/机械臂.jpg" id="1_l5y7c"]
 [ext_resource type="PackedScene" uid="uid://c5p3akujvmitw" path="res://Entity/主角/entity_2.tscn" id="2_1ucq2"]
 [ext_resource type="PackedScene" uid="uid://bu5x2qje805pe" path="res://Entity/石头人/石头人.tscn" id="2_64u8c"]
 [ext_resource type="PackedScene" uid="uid://de18ubvjnfumg" path="res://Scene/textbox/textbox.tscn" id="2_ba1qj"]
+[ext_resource type="Texture2D" uid="uid://c8bkixxcfbl8d" path="res://全局/晚夜.jpg" id="2_l5y7c"]
 [ext_resource type="PackedScene" uid="uid://cltb6qvsdknov" path="res://Scene/textbox/dialogue_label.tscn" id="3_i8u30"]
 
 [sub_resource type="GDScript" id="GDScript_i8u30"]
@@ -12,6 +13,7 @@ script/source = "extends Control
 @onready var 玩家: Player_2 = $\"Entity_2\"
 
 func _ready() -> void:
+	存档.存储_剧情进度(1)
 	声音.更换音乐(声音.剧情2)
 	玩家.限制相机移动($TextureRect)
 	await 玩家.镜头至屏幕($TextureRect)
@@ -211,14 +213,40 @@ A-MEN：走向哪里？
 	\"\"\")
 	await text_box.结束
 	特殊_6()
+	
+@onready var texture_rect_3: TextureRect = $TextureRect3
+@onready var color_rect: ColorRect = $特殊_4/ColorRect
+
 func 特殊_6():
 	pass
 #	（镜头缓缓拉远，A-MEN站在断桥边缘，胸口的桥状纹路发出柔光，光线微微延伸向下一关的方向。）
-
-	print_debug(\"未做完:特殊_6\")
+	#await  get_tree().create_timer(1).timeout
+	#var a=get_tree().create_tween()
+	#a.tween_property(texture_rect_3,\"modulate\",Color(1.0, 1.0, 1.0),3)
+	#特殊_4_1.visible=true
+	#color_rect.color=Color(0.0, 0.0, 0.0, 0.0)
+	#dialogue_label.开始(\"(A-MEN站在断桥边缘，胸口的桥状纹路发出柔光，光线微微延伸向下一关的方向。)\")
+	#await  get_tree().create_timer(5).timeout
+	#特殊_4_1.visible=false
+	
 	下一章()
 func 下一章():
-	转场.切换章节_并丢弃(self,\"res://Scene/第三章_关卡2/第三章_关卡2.tscn\")
+	转场.play(\"入场\")
+	await 转场.animation_finished
+	
+	特殊_4_1.visible=true
+	color_rect.color=Color(0.0, 0.0, 0.0, 0.0)
+	特殊_4_1.layer=21
+	dialogue_label.开始(\"(A-MEN站在断桥边缘，胸口的桥状纹路发出柔光，光线微微延伸向下一关的方向。)\")
+	await dialogue_label.finished_typing
+	await  get_tree().create_timer(2).timeout
+	
+	var a:Node=load(\"res://Scene/第三章_关卡2/第三章_关卡2.tscn\").instantiate()
+	a.ready.connect(func ():
+		queue_free()
+		转场.play(\"退场\")
+		)
+	get_tree().root.add_child(a)
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ba1qj"]
@@ -245,9 +273,20 @@ offset_bottom = 765.0
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("1_l5y7c")
 
+[node name="TextureRect3" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = -368.0
+offset_top = -315.0
+offset_right = 1552.0
+offset_bottom = 765.0
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_l5y7c")
+
 [node name="Entity_2" parent="." instance=ExtResource("2_1ucq2")]
 
 [node name="冻结区" type="Node2D" parent="."]
+visible = false
 
 [node name="石头人" parent="冻结区" node_paths=PackedStringArray("敌人") instance=ExtResource("2_64u8c")]
 position = Vector2(-131, 9)
@@ -283,7 +322,6 @@ shape = SubResource("RectangleShape2D_p2ile")
 visible = false
 
 [node name="特殊_4" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="特殊_4"]
 anchors_preset = 15
@@ -292,6 +330,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.16862746)
+metadata/_edit_use_anchors_ = true
 
 [node name="DialogueLabel" parent="特殊_4/ColorRect" instance=ExtResource("3_i8u30")]
 layout_mode = 1

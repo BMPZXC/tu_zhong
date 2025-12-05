@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://c1ly5p77ls7ly"]
+[gd_scene load_steps=10 format=3 uid="uid://c1ly5p77ls7ly"]
 
 [ext_resource type="Curve" uid="uid://dvtj8v4fm0af6" path="res://全局/设置/音量_数值映射.tres" id="1_ggnbj"]
 [ext_resource type="Script" uid="uid://dmulmqb8b4pyv" path="res://全局/设置/设置.tres.gd" id="1_ij8oh"]
 [ext_resource type="Texture2D" uid="uid://cu18f6o4k4107" path="res://全局/设置/设置-copy.png" id="2_1ljkg"]
+[ext_resource type="StyleBox" uid="uid://bfy1hf5h3cjy5" path="res://全局/设置/new_style_box_flat.tres" id="3_3cld1"]
 
 [sub_resource type="Animation" id="Animation_234iw"]
 length = 0.001
@@ -113,6 +114,10 @@ _data = {
 &"入场": SubResource("Animation_sqd5e")
 }
 
+[sub_resource type="Theme" id="Theme_vdp1n"]
+HSlider/styles/grabber_area = ExtResource("3_3cld1")
+HSlider/styles/grabber_area_highlight = ExtResource("3_3cld1")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0wlyb"]
 bg_color = Color(0.25482777, 0.5174707, 0.90053093, 1)
 
@@ -134,7 +139,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 1
-color = Color(0.43137255, 0.45882353, 0.47843137, 0)
+color = Color(0.23046657, 0.26493278, 0.28955156, 0.7764706)
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
 anchors_preset = 8
@@ -148,11 +153,11 @@ offset_right = 750.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_vdp1n")
 
 [node name="Panel" type="Panel" parent="CanvasLayer/CenterContainer"]
-modulate = Color(1, 1, 1, 0)
 clip_children = 2
-custom_minimum_size = Vector2(1500, 0.1000061)
+custom_minimum_size = Vector2(1500, 200)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_0wlyb")
 

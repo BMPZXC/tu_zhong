@@ -10,15 +10,16 @@ func 切换章节_并丢弃(场景自己:Node,路径:String)->void:
 	a.切换章节(路径)
 ##场景自己  当前场景  ,  函数 返回触发
 func 切换章节_之后返回(场景自己:Node,路径:String,函数:Callable)->void:
-	
-	
 	var a=转场
 	var parent=场景自己.get_parent()
+	if not parent:
+		parent=场景自己.get_tree().root
+		print_debug("异常")
 	a.加载完毕.connect(func (_c):parent.remove_child(场景自己),CONNECT_ONE_SHOT)
 	var c=await  a.切换章节(路径)
 	c.tree_exited.connect(func ():
 		parent.add_child(场景自己)
-		函数.call()
+		if 函数 is Callable:函数.call()
 		)
 func 切换章节_之后返回_丢弃(场景自己:Node)->void: ###与 切换章节_之后返回 是一对
 	play("入场")

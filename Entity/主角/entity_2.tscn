@@ -96,12 +96,13 @@ extends 职业
 
 func 切入():
 	_攻击段数_当前=0
-
+var 没被打断=true
 func 普攻():
 	set_process(true)
 	再次点击鼠标左键=true
 	命中=true
-	while 再次点击鼠标左键 and 命中:
+	没被打断=true
+	while 再次点击鼠标左键 and 命中 and 没被打断:
 		再次点击鼠标左键=false
 		命中=false
 		await  攻击()
@@ -124,6 +125,10 @@ func _process(_delta: float) -> void:
 var 命中=false
 func _on_攻击区_命中() -> void:
 	命中=true
+
+
+func _on_entity_2_生命_() -> void:
+	没被打断=false
 "
 
 [sub_resource type="Animation" id="Animation_xethj"]
@@ -676,7 +681,7 @@ alignment = 2
 [node name="鼠标左键" parent="CanvasLayer/右下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = ""
-"冷却值" = -8339.900498298508
+"冷却值" = -8340.076052965174
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标左键"]
 layout_mode = 1
@@ -697,7 +702,7 @@ texture = ExtResource("8_ajqgl")
 layout_mode = 2
 "按键" = ""
 "技能_图标" = ExtResource("8_0qels")
-"冷却值" = -8339.900498298508
+"冷却值" = -8340.076052965174
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标右键"]
 layout_mode = 1
@@ -730,19 +735,19 @@ theme_override_constants/separation = 20
 layout_mode = 2
 "按键" = "A"
 "技能_图标" = ExtResource("9_v6kgo")
-"冷却值" = -8339.900498298508
+"冷却值" = -8340.076052965174
 
 [node name="技能按钮2" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "w"
 "技能_图标" = ExtResource("10_ajqgl")
-"冷却值" = -8339.900498298508
+"冷却值" = -8340.076052965174
 
 [node name="技能按钮3" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "d"
 "技能_图标" = ExtResource("11_vta88")
-"冷却值" = -8339.900498298508
+"冷却值" = -8340.076052965174
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -775,19 +780,19 @@ alignment = 1
 layout_mode = 2
 "按键" = "1"
 "技能_图标" = ExtResource("15_g4f1u")
-"冷却值" = -19.752706777777313
+"冷却值" = -19.92826144444398
 
 [node name="技能按钮2" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "2"
 "技能_图标" = ExtResource("18_8ndxi")
-"冷却值" = -19.850075888888515
+"冷却值" = -20.025630555555185
 
 [node name="技能按钮3" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "3"
 "技能_图标" = ExtResource("20_vmob0")
-"冷却值" = -19.845685444443987
+"冷却值" = -20.021240111110657
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
@@ -812,6 +817,7 @@ collision_mask = 4
 script = ExtResource("9_neb7i")
 a = NodePath("../..")
 "击飞强度" = 0.2
+"击飞强度_定值" = Vector2(1, 0)
 
 [node name="攻击_1" type="CollisionShape2D" parent="剑2/攻击区"]
 position = Vector2(18.5, -7)
@@ -889,5 +895,6 @@ script = ExtResource("19_3uyxx")
 metadata/_custom_type_script = "uid://ddxd3e68gj4d7"
 
 [connection signal="生命_" from="." to="." method="_减血"]
+[connection signal="生命_" from="." to="剑2" method="_on_entity_2_生命_"]
 [connection signal="命中" from="剑2/攻击区" to="剑2" method="_on_攻击区_命中"]
 [connection signal="受击_攻击方" from="盾/HealthComponent" to="盾" method="盾反回复"]

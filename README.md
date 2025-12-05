@@ -100,3 +100,8 @@
 
 ---
 
+## 版权说明
+
+本项目为开源参赛作品，遵循[MIT协议](https://gitcode.com/kayingbei/TheBridgeTherapy/blob/main/LICENSE)
+
+---

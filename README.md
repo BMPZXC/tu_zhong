@@ -84,9 +84,9 @@
 
 ## 📥 下载与启动方式
 
-1. 前往 Releases 页面下载最新版本  
+1. [前往 Releases](https://github.com/BMPZXC/tu_zhong/releases) 页面下载最新版本  
 2. 解压压缩包  
-3. 运行 `途中.exe` 即可进入游戏  
+3. 运行 `途中.exe` 即可进入游戏
 
 ---
 

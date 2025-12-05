@@ -207,7 +207,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 1
-color = Color(0.23046657, 0.26493278, 0.28955156, 0.7764706)
+color = Color(0.43223056, 0.46054554, 0.47963405, 0.7764706)
 
 [node name="CenterContainer" type="CenterContainer" parent="CanvasLayer"]
 anchors_preset = 8

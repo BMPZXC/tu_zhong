@@ -8,6 +8,7 @@ func 保存成功(a:bool):
 
 func _on_color_rect_focus_entered() -> void:
 	play_backwards("入场")
+	#打开设置=false
 
 
 @onready var control: Control = $CanvasLayer/CenterContainer/Panel/Control/Control
@@ -28,7 +29,7 @@ func _是否为主页_2()->bool:
 
 
 func _on_button_pressed() -> void:
-	play_backwards("入场")
+	_on_color_rect_focus_entered()
 	await animation_finished
 	转场.加载完毕.connect(func (a):clear_nonglobal_from_root(a))
 	转场.切换章节(主场景路径)
@@ -94,6 +95,9 @@ func _on_h_slider_drag_ended_2(value_changed: bool) -> void:
 	if not value_changed:return
 	_存储("音量_背景音乐",h_slider_2.value)
 
+	
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
 
 func _on_texture_rect_pressed() -> void:
+	if canvas_layer.visible:return
 	play("入场")

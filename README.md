@@ -29,7 +29,7 @@
 - 日志一：https://www.bilibili.com/opus/1142505105134714884?spm_id_from=333.1387.0.0
 - 日志二：https://www.bilibili.com/opus/1142505302681190455?spm_id_from=333.1387.0.0
 - 日志三：https://www.bilibili.com/opus/1142505380031496196?spm_id_from=333.1387.0.0
-- 视频：
+- 视频：https://www.bilibili.com/video/BV1D42BB3EGp/?share_source=copy_web&vd_source=8afebf285a0e2d2e573ab1e4d7e6dc24
 
 ---
 

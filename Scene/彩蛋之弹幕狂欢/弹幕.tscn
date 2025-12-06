@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://rxjrhmrrksql"]
+[gd_scene load_steps=4 format=3 uid="uid://s4vk7aumjwkx"]
 
-[ext_resource type="Script" uid="uid://ddxd3e68gj4d7" path="res://Entity/血条_显示.gd" id="1_1tn36"]
-[ext_resource type="Script" uid="uid://iubl2fg1wf6e" path="res://Entity/攻击区.gd" id="1_6oee2"]
+[ext_resource type="Script" uid="uid://iubl2fg1wf6e" path="res://Entity/攻击区.gd" id="1_106ba"]
 
 [sub_resource type="GDScript" id="GDScript_807mj"]
 script/source = "@tool
@@ -15,78 +14,87 @@ var 字体=preload(\"res://Scene/textbox/思源黑体Medium.otf\")
 @export var 敌人:CharacterBody2D
 
 
+#func 大小()->Vector2:
+	#return collision_shape_2d.shape.size
 func _ready() -> void:
 	if Engine.is_editor_hint():set_process(false)
+	#velocity=方向
 var 颜色=Color(1.0, 1.0, 1.0, 1.0)
 func _draw() -> void:
 	var 左下角=字体.get_string_size(字)*Vector2(-0.5,0.5)
 	draw_char(字体,左下角,字,16,颜色)
 	
-var 落地_等待:float=0
+var 模式:Callable=移动
 func _physics_process(delta: float) -> void:
-	if 生命<=0:
-		静止(delta)
-		return
 	if Engine.is_editor_hint():
 		set_process(false)
 		return
-	if is_on_floor():
-		if velocity.y>0:velocity.y=0
-		velocity+=+(Vector2.ZERO-velocity)*delta*10
-		落地_等待+=delta
-		if 落地_等待>0.4 and 敌人:
-			落地_等待=0
-			velocity+=Vector2(50,-50)*2
-			velocity.x=velocity.x* sign(敌人.global_position.x-global_position.x)
-	else :
-		velocity.y+=20*60*delta
-	move_and_slide()
+	模式.call(delta)
+	var a= move_and_slide()
+	if a and not 已处理:
+		撞墙.emit()
+		queue_free()
+
+#var 方向:Vector2
+func 移动(_delta: float):
+	pass
+
+@onready var area_2d: Area2D = $Area2D
+
+@onready var collision_shape_2d: CollisionShape2D = $Area2D/CollisionShape2D
+
 func 静止(delta: float):
 	velocity-=velocity*delta*0.5
 	queue_redraw()
-@onready var area_2d: Area2D = $Area2D
-
 func _on_死亡() -> void:
+	已处理=true
+	模式=静止
 	set_collision_layer_value(3,false)
-	set_collision_layer_value(5,false)
 	area_2d.set_deferred(\"monitoring\",false)
+	计分.emit()
 	var a=get_tree().create_tween()
 	a.set_ease(Tween.EASE_OUT)
+	a.tween_property(self,\"颜色\",Color(1.0, 1.0, 1.0, 0.0),3)
+	await a.finished
+	queue_free()
+signal 计分
+signal 撞墙
+var 已处理=false
+func _on_area_2d_命中() -> void:
+	已处理=true
+	模式=静止
+	set_collision_layer_value(3,false)
+	area_2d.set_deferred(\"monitoring\",false)
+	计分.emit()
+	
+	var a=get_tree().create_tween()
 	a.tween_property(self,\"颜色\",Color(1.0, 1.0, 1.0, 0.0),1)
 	await a.finished
 	queue_free()
 "
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_807mj"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6oee2"]
 size = Vector2(14, 14)
 
 [node name="CharacterBody2D" type="CharacterBody2D"]
-collision_layer = 20
-collision_mask = 17
+collision_layer = 4
 script = SubResource("GDScript_807mj")
-"生命_上线" = 2
-"质量" = 0.5
+"质量" = 0.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_807mj")
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_6oee2")
 
 [node name="Area2D" type="Area2D" parent="." node_paths=PackedStringArray("a")]
 collision_layer = 0
 collision_mask = 2
-script = ExtResource("1_6oee2")
+script = ExtResource("1_106ba")
 a = NodePath("..")
-"击飞强度" = 3.0
+"击飞强度" = 0.2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_6oee2")
 
-[node name="血条" type="Node2D" parent="." node_paths=PackedStringArray("目标")]
-position = Vector2(-16, 6)
-script = ExtResource("1_1tn36")
-"目标" = NodePath("..")
-metadata/_custom_type_script = "uid://ddxd3e68gj4d7"
-
 [connection signal="死亡" from="." to="." method="_on_死亡"]
+[connection signal="命中" from="Area2D" to="." method="_on_area_2d_命中"]

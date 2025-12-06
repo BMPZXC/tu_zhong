@@ -1,0 +1,644 @@
+[gd_scene load_steps=10 format=4 uid="uid://deqan2xr2o6wl"]
+
+[ext_resource type="TileSet" uid="uid://qk4jyafelh87" path="res://Asset/Tile/tile.tres" id="1_3dk0c"]
+[ext_resource type="PackedScene" uid="uid://c5p3akujvmitw" path="res://Entity/主角/entity_2.tscn" id="2_p0e3q"]
+[ext_resource type="Texture2D" uid="uid://dk3nmtfiinx6v" path="res://Scene/主页/叉.png" id="3_v6nk4"]
+
+[sub_resource type="GDScript" id="GDScript_p0e3q"]
+script/source = "extends TileMapLayer
+
+@onready var entity_2: Player_2 = $Entity_2
+@onready var color_rect: ColorRect = $ColorRect
+
+func _ready() -> void:
+	entity_2.禁用输入=true
+	
+	entity_2.限制相机移动(color_rect)
+	await  entity_2.镜头至屏幕(color_rect)
+	
+	entity_2.禁用输入=false
+	
+	
+##########################
+func _on_boss_水平弹幕() -> void:
+	水平弹幕(右)
+const 字组=[
+	[\"我说天动万象,你耳朵聋了吗?\",
+	\"开门开门开门开门开门开门开门开门\",
+	\"虽然我很没用，但是看几位这么有用，真好。\"
+	,\"我是神里绫华的狗!\"
+	,\"前面的区域以后再来探索吧!\"
+	,]
+	,[\"念头通达\"
+	,\"我们终将重逢\"
+	,\"开播大吉\"
+	,\"好人一生平安\"
+	,]
+	,[\"冲呀\",\"嗷\",\"开门\",\"终焉\",\"的说\",\"嘿咻\"]
+]
+signal 继续
+func 可继续():
+	if %Entity_2.生命>0:
+		继续.emit()
+@onready var 右: Node2D = $右
+var 弹幕=preload(\"res://Scene/彩蛋之弹幕狂欢/弹幕.tscn\")
+func 水平弹幕(位置):
+	var a=400
+	while a>0:
+		await  继续
+		if %boss.打断:return
+		var q=randi_range(1,3)
+		var zi= 抽取字组(q)
+		var f=zi.length()+10
+		a-=f
+		var s=f*0.02
+		if q>=2:s+=0.4
+		if q>=3:s+=0.3
+		await get_tree().create_timer(0.5*s).timeout
+		await  生成弹幕组(位置获取(位置,q),zi,-100,s*3)
+		await get_tree().create_timer(0.5*s).timeout
+	if %boss.打断:return
+	%boss.切换()
+
+	
+func 抽取字组(范围:int)->String:
+	var q=randi_range(范围,3)
+	var a:Array= 字组[q-1]
+	return a[randi_range(0,a.size()-1)]
+	
+func 生成弹幕组(位置,字:String,方向:float,s:float):  ##水平弹幕
+	var b=abs(14.0/方向)
+	var f=s/字.length()
+	for i in 字.length():
+		await  继续
+		if %boss.打断:return
+		var a=生成弹幕(位置,字[i],Vector2(方向,0))
+		a.计分.connect(func ():%boss.护盾减少(f))
+		a.撞墙.connect(func ():
+			var r:生物= ziti.instantiate()
+			r.global_position=a.global_position
+			r.字=a.字
+			r.敌人=%Entity_2
+			r.生命_上线=1
+			%\"生成位\".add_child(r)
+			r.死亡.connect(func ():%boss.护盾减少(f))
+		)
+		%\"生成位\".add_child(a)
+		await get_tree().create_timer(b).timeout
+		
+#########################
+var ziti=preload(\"res://Entity/字体系_怪物/小怪_字.tscn\")
+const 怪物字典=[
+\"恭听太阳的轰鸣\"
+,\"潮水啊!我已归来\"
+,\"代表太阳消灭你\"
+,\"森林会记住一切\"
+,\"所以我出手了\"
+,\"oiiai\"
+,\"将帅\"
+,\"击杀\"
+,\"你好\"
+,\"拜拜\"
+,\"甜菜\"
+,\"我说天动万象,你耳朵聋了吗?\"
+,\"前面的区域以后再来探索吧!\"
+,\"????????????????\"
+
+]
+func 生成怪物():
+	敌人数=0
+	var zzz=怪物字典[randi_range(0,怪物字典.size()-1)]
+	var a=%\"怪物初始位\".global_position
+	var b=(%\"怪物初始位2\".global_position-a)/zzz.length()
+	var 生命=roundi(16.0 / zzz.length())
+	for zi in zzz.split():
+		await  继续
+		if %boss.打断:return
+		var c= 生成弹幕(a,zi,Vector2.ZERO)
+		a.x+=b.x
+		c.颜色=Color(0.0, 0.0, 0.0, 0.0)
+		%\"生成位\".add_child(c)
+		var q=get_tree().create_tween()
+		q.tween_method(func (w):
+			if not c:
+				q.kill()
+				return
+			c.颜色=w
+			c.queue_redraw()
+			,Color(0.0, 0.0, 0.0, 0.0)
+			,Color(1.0, 1.0, 1.0, 1.0)
+			,0.3-0.2*(zzz.length()/16))
+		await q.finished
+		var r:生物= ziti.instantiate()
+		r.global_position=c.global_position
+		r.字=zi
+		r.敌人=%Entity_2
+		r.生命_上线=生命
+		敌人数+=1
+		%\"生成位\".add_child(r)
+		r.死亡.connect(生成怪物_击破)
+		c.queue_free()
+	
+var 敌人数:int=0
+func 生成怪物_击破():
+	%boss.护盾减少(5)
+	敌人数-=1
+	if %boss.打断:return
+	if 敌人数<=0:
+		%boss.切换()
+##########
+@onready var 中: Node2D = $中
+@onready var 下落_位置集:Array[Vector2]=下落_位置集_1()
+func 下落_位置集_1()->Array[Vector2]:
+	var a:Array[Vector2]=[]
+	var z1:=中.get_child_count()
+	for i in z1:
+		a.append(中.get_child(i).global_position)
+	return a
+
+func 下落():
+	var a=7
+	while a>0:
+		await  继续
+		if %boss.打断:return
+		a-=1
+		if randf()>0.5:
+			var b= 下落_1(3,7)
+			下落_2(b,2)
+		else :
+			var b= 下落_1(1,2)
+			for  i in 3: 
+				下落_2(b,0,0.3)
+				await get_tree().create_timer(0.2).timeout
+			
+		await get_tree().create_timer(1).timeout
+	if %boss.打断:return
+	%boss.切换()
+func 下落_1(离散:int=2,离散_2:int=5)->int:
+	var z1=下落_位置集.size()
+	var b=entity_2.global_position
+	var nearest =下落_位置集.reduce(
+		func(c:Vector2, p:Vector2):
+			if abs(p.x-b.x) < abs(c.x-b.x) :
+				return p
+			else:
+				return c
+			, 下落_位置集[0])
+	var nearest_in=下落_位置集.find(nearest)
+	
+	var w=下落_范围限制(nearest_in,z1,1,离散,离散_2)
+	w.append_array(下落_范围限制(nearest_in,z1,-1,离散,离散_2))
+	nearest_in=w[randi_range(0,w.size()-1)]
+	return nearest_in
+func 下落_2(位置:int,大小:int=1,c:float=1):
+	for q in 下落_位置集.size():
+		if abs(q-位置)<=大小:continue
+		var s1= 生成弹幕(下落_位置集[q],\"砸\",Vector2(0,1)*300)
+		s1.计分.connect(func ():%boss.护盾减少(5*c))
+		s1.撞墙.connect(func ():%boss.护盾减少(0.1*c))
+		%\"生成位\".add_child(s1)
+	
+	
+func 下落_范围限制(a:int,z1:int,b:int,q1,q2)->Array:
+	return range(clamp(a+q1*b,0,z1),clamp(a+q2*b,0,z1),b)
+#############
+func 生成弹幕(位置,字:String,方向:Vector2):
+	var a:生物=弹幕.instantiate()
+	a.global_position=位置
+	a.字=字
+	a.velocity=方向
+	return a
+	
+func 位置获取(a:Node2D,b:int):
+	assert(a.get_child_count()>=b)
+	var q:Node2D=a.get_child(b-1)
+	return q.global_position
+	
+	
+func _process(_delta: float) -> void:
+	可继续()
+
+
+
+###########################
+@onready var canvas_layer: CanvasLayer = $CanvasLayer
+
+func _on_entity_2_死亡() -> void:
+	战败ui.暂停(%\"生成位\",true)
+	canvas_layer.visible=true
+	%Entity_2.禁用输入=true
+
+@onready var label: Label = $CanvasLayer/HBoxContainer/Button2/Label
+@onready var button_2: Button = $CanvasLayer/HBoxContainer/Button2
+
+var 复活次数=3
+func _on_button_2_pressed() -> void:
+	canvas_layer.visible=false
+	%Entity_2.生命=%Entity_2.生命_上线
+	%Entity_2.禁用输入=false
+	复活次数-=1
+	if 复活次数>0:
+		label.text=\"次数\"+str(复活次数)
+	else :
+		button_2.visible=false
+	战败ui.暂停(%\"生成位\",false)
+
+@onready var h_box_container: HBoxContainer = $CanvasLayer/HBoxContainer
+@onready var button: Button = $CanvasLayer/Button
+
+func _on_button_pressed() -> void:
+	canvas_layer.visible=false
+	button.visible=false
+	h_box_container.visible=true
+	%boss.切换()
+	
+	
+"
+
+[sub_resource type="GDScript" id="GDScript_v6nk4"]
+script/source = "extends 生物
+
+var 打断=false
+
+@onready var panel: Panel = $Panel
+@onready var tile_map_layer: TileMapLayer = $\"..\"
+
+func 护盾减少(a:float):
+	%护盾.value-=a
+	if %护盾.value<=0 and not 打断:
+		#if 上次==切换_召唤:tile_map_layer.怪物数=0
+		打断=true
+		模式=掉落
+		panel.self_modulate=Color(0.0, 0.0, 0.0, 0.0)
+		掉落时间=3
+		for i in %生成位.get_children():
+			i.queue_free()
+		
+		
+
+var 模式:Callable=浮空
+func 浮空(_delta: float):
+	velocity=Vector2.ZERO
+	move_and_slide()
+
+func _physics_process(delta: float) -> void:
+	模式.call(delta)
+	
+signal 水平弹幕(方向:int)
+var 掉落时间:float=0
+func 掉落(delta: float):
+	if not is_on_floor():
+		velocity.y+=300*delta
+		move_and_slide()
+	else :
+		掉落时间-=delta
+		set_collision_layer_value(3,true)
+	if 掉落时间<=0:
+		if %护盾.value<=0:
+			%护盾.value=100
+		set_collision_layer_value(3,false)
+		打断=false
+		模式= 浮空
+		切换()
+		
+
+signal 胜利
+func _on_生命_() -> void:
+	%血条.value-=2.5
+	if %血条.value<=0:
+		胜利.emit()
+		queue_free()
+		
+var 上次:Callable
+func 切换():
+	#var a:Array[Callable]=[切换_水平弹幕]
+	#var a:Array[Callable]=[切换_召唤]
+	var a:Array[Callable]=[切换_水平弹幕,切换_召唤,切换_下落]
+	if 上次 and a.size()>1:
+		a.remove_at(a.find(上次))
+	var b= a[randi_range(0,a.size()-1)]
+	上次=b
+	b.call()
+func 切换_水平弹幕():
+	var a=get_tree().create_tween()
+	a.tween_property(self,\"global_position\",%右.global_position,2)
+	await a.finished
+	水平弹幕.emit()
+
+signal 召唤
+func 切换_召唤():
+	var a=get_tree().create_tween()
+	a.tween_property(self,\"global_position\",%左.global_position,2)
+	await a.finished
+	召唤.emit()
+
+signal 下落
+func 切换_下落():
+	var a=get_tree().create_tween()
+	a.tween_property(self,\"global_position\",%中.global_position,2)
+	await a.finished
+	下落.emit()
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p0e3q"]
+bg_color = Color(0.52424747, 0.58676106, 0.6697165, 1)
+corner_radius_top_left = 90
+corner_radius_top_right = 90
+corner_radius_bottom_right = 90
+corner_radius_bottom_left = 90
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v6nk4"]
+size = Vector2(129.5, 64.5)
+
+[sub_resource type="GDScript" id="GDScript_ier3d"]
+script/source = "extends Button
+
+
+@onready var tile_map_layer: TileMapLayer = $\"../../..\"
+var a=true
+func _pressed() -> void:
+	if a:
+		a=false
+		转场.切换章节_并丢弃(tile_map_layer,\"res://Scene/彩蛋之弹幕狂欢/弹幕狂欢.tscn\")
+"
+
+[sub_resource type="GDScript" id="GDScript_3w4e6"]
+script/source = "extends Label
+
+
+
+func _on_boss_胜利() -> void:
+	visible=true
+"
+
+[node name="TileMapLayer" type="TileMapLayer"]
+tile_map_data = PackedByteArray("AAARAAoAAAAEAAAAAAAQAAoAAAABAAEAAAAPAAoAAAABAAEAAAAOAAoAAAABAAEAAAANAAoAAAABAAEAAAAMAAoAAAABAAEAAAALAAoAAAABAAEAAAAKAAoAAAABAAEAAAAJAAoAAAABAAEAAAAIAAoAAAABAAEAAAAHAAoAAAABAAEAAAAGAAoAAAABAAEAAAAFAAoAAAABAAEAAAAEAAoAAAABAAEAAAADAAoAAAABAAEAAAACAAoAAAABAAEAAAABAAoAAAABAAEAAAAAAAoAAAABAAEAAAD//woAAAABAAEAAAD+/woAAAABAAEAAAD9/woAAAABAAEAAAD8/woAAAABAAEAAAD7/woAAAABAAEAAAD6/woAAAABAAEAAAD5/woAAAABAAEAAAD4/woAAAABAAEAAAD3/woAAAABAAEAAAD2/woAAAABAAEAAAD1/woAAAABAAEAAAD0/woAAAABAAEAAADz/woAAAABAAEAAADy/woAAAABAAEAAADx/woAAAABAAEAAADw/woAAAABAAEAAADv/woAAAABAAEAAADu/woAAAAEAAEAAADu//T/AAABAAIAAADu//X/AAABAAIAAADu//b/AAAEAAIAAADu//f/AAACAAIAAADu//j/AAACAAIAAADu//n/AAACAAIAAADu//r/AAACAAIAAADu//v/AAACAAIAAADu//z/AAACAAIAAADu//3/AAACAAIAAADu//7/AAACAAIAAADu////AAACAAIAAADu/wAAAAACAAIAAADu/wEAAAACAAIAAADu/wIAAAACAAIAAADu/wMAAAACAAIAAADu/wQAAAACAAIAAADu/wUAAAACAAIAAADu/wYAAAACAAIAAADu/wcAAAACAAIAAADu/wgAAAACAAIAAADu/wkAAAACAAIAAAARAPP/AAABAAIAAAARAPT/AAABAAIAAAARAPX/AAABAAIAAAARAPb/AAAEAAMAAAARAPf/AAAAAAIAAAARAPj/AAAAAAIAAAARAPn/AAAAAAIAAAARAPr/AAAAAAIAAAARAPv/AAAAAAIAAAARAPz/AAAAAAIAAAARAP3/AAAAAAIAAAARAP7/AAAAAAIAAAARAP//AAAAAAIAAAARAAAAAAAAAAIAAAARAAEAAAAAAAIAAAARAAIAAAAAAAIAAAARAAMAAAAAAAIAAAARAAQAAAAAAAIAAAARAAUAAAAAAAIAAAARAAYAAAAAAAIAAAARAAcAAAAAAAIAAAARAAgAAAAAAAIAAAARAAkAAAAAAAIAAAAQAPb/AAABAAMAAAAPAPb/AAABAAMAAAAOAPb/AAABAAMAAAANAPb/AAABAAMAAAAMAPb/AAABAAMAAAALAPb/AAABAAMAAAAKAPb/AAABAAMAAAAJAPb/AAABAAMAAAAIAPb/AAABAAMAAAAHAPb/AAABAAMAAAAGAPb/AAABAAMAAAAFAPb/AAABAAMAAAAEAPb/AAABAAMAAAADAPb/AAABAAMAAAACAPb/AAABAAMAAAABAPb/AAABAAMAAAAAAPb/AAABAAMAAAD///b/AAABAAMAAAD+//b/AAABAAMAAAD9//b/AAABAAMAAAD8//b/AAABAAMAAAD7//b/AAABAAMAAAD6//b/AAABAAMAAAD5//b/AAABAAMAAAD4//b/AAABAAMAAAD3//b/AAABAAMAAAD2//b/AAABAAMAAAD1//b/AAABAAMAAAD0//b/AAABAAMAAADz//b/AAABAAMAAADy//b/AAABAAMAAADx//b/AAABAAMAAADw//b/AAABAAMAAADv//b/AAABAAMAAADt/w4AAAABAAIAAADt/w0AAAABAAIAAADt/wwAAAABAAIAAADt/wsAAAABAAIAAADt/woAAAABAAIAAADt/wkAAAABAAIAAADt/wgAAAABAAIAAADt/wcAAAABAAIAAADt/wYAAAABAAIAAADt/wUAAAABAAIAAADt/wQAAAABAAIAAADt/wMAAAABAAIAAADt/wIAAAABAAIAAADt/wEAAAABAAIAAADt/wAAAAABAAIAAADt////AAABAAIAAADt//7/AAABAAIAAADt//3/AAABAAIAAADt//z/AAABAAIAAADt//v/AAABAAIAAADt//r/AAABAAIAAADt//n/AAABAAIAAADt//j/AAABAAIAAADt//f/AAABAAIAAADt//b/AAABAAIAAADt//X/AAABAAIAAADt//T/AAABAAIAAADs/w4AAAABAAIAAADs/w0AAAABAAIAAADs/wwAAAABAAIAAADs/wsAAAABAAIAAADs/woAAAABAAIAAADs/wkAAAABAAIAAADs/wgAAAABAAIAAADs/wcAAAABAAIAAADs/wYAAAABAAIAAADs/wUAAAABAAIAAADs/wQAAAABAAIAAADs/wMAAAABAAIAAADs/wIAAAABAAIAAADs/wEAAAABAAIAAADs/wAAAAABAAIAAADs////AAABAAIAAADs//7/AAABAAIAAADs//3/AAABAAIAAADs//z/AAABAAIAAADs//v/AAABAAIAAADs//r/AAABAAIAAADs//n/AAABAAIAAADs//j/AAABAAIAAADs//f/AAABAAIAAADs//b/AAABAAIAAADs//X/AAABAAIAAADs//T/AAABAAIAAADr/w4AAAABAAIAAADr/w0AAAABAAIAAADr/wwAAAABAAIAAADr/wsAAAABAAIAAADr/woAAAABAAIAAADr/wkAAAABAAIAAADr/wgAAAABAAIAAADr/wcAAAABAAIAAADr/wYAAAABAAIAAADr/wUAAAABAAIAAADr/wQAAAABAAIAAADr/wMAAAABAAIAAADr/wIAAAABAAIAAADr/wEAAAABAAIAAADr/wAAAAABAAIAAADr////AAABAAIAAADr//7/AAABAAIAAADr//3/AAABAAIAAADr//z/AAABAAIAAADr//v/AAABAAIAAADr//r/AAABAAIAAADr//n/AAABAAIAAADr//j/AAABAAIAAADr//f/AAABAAIAAADr//b/AAABAAIAAADr//X/AAABAAIAAADr//T/AAABAAIAAADq/w4AAAAAAAIAAADq/w0AAAAAAAIAAADq/wwAAAAAAAIAAADq/wsAAAAAAAIAAADq/woAAAAAAAIAAADq/wkAAAAAAAIAAADq/wgAAAAAAAIAAADq/wcAAAAAAAIAAADq/wYAAAAAAAIAAADq/wUAAAAAAAIAAADq/wQAAAAAAAIAAADq/wMAAAAAAAIAAADq/wIAAAAAAAIAAADq/wEAAAAAAAIAAADq/wAAAAAAAAIAAADq////AAAAAAIAAADq//7/AAAAAAIAAADq//3/AAAAAAIAAADq//z/AAAAAAIAAADq//v/AAAAAAIAAADq//r/AAAAAAIAAADq//n/AAAAAAIAAADq//j/AAAAAAIAAADq//f/AAAAAAIAAADq//b/AAAAAAIAAADq//X/AAAAAAIAAADq//T/AAAAAAIAAAAUAA8AAAABAAMAAAAUAA4AAAABAAIAAAAUAA0AAAABAAIAAAAUAAwAAAABAAIAAAAUAAsAAAABAAIAAAAUAAoAAAABAAIAAAATAA8AAAABAAMAAAATAA4AAAABAAIAAAATAA0AAAABAAIAAAATAAwAAAABAAIAAAATAAsAAAABAAIAAAATAAoAAAABAAIAAAASAA8AAAABAAMAAAASAA4AAAABAAIAAAASAA0AAAABAAIAAAASAAwAAAABAAIAAAASAAsAAAABAAIAAAASAAoAAAABAAIAAAARAA8AAAABAAMAAAARAA4AAAABAAIAAAARAA0AAAABAAIAAAARAAwAAAABAAIAAAARAAsAAAABAAIAAAAQAA8AAAABAAMAAAAQAA4AAAABAAIAAAAQAA0AAAABAAIAAAAQAAwAAAABAAIAAAAQAAsAAAABAAIAAAAPAA8AAAABAAMAAAAPAA4AAAABAAIAAAAPAA0AAAABAAIAAAAPAAwAAAABAAIAAAAPAAsAAAABAAIAAAAOAA8AAAABAAMAAAAOAA4AAAABAAIAAAAOAA0AAAABAAIAAAAOAAwAAAABAAIAAAAOAAsAAAABAAIAAAANAA8AAAABAAMAAAANAA4AAAABAAIAAAANAA0AAAABAAIAAAANAAwAAAABAAIAAAANAAsAAAABAAIAAAAMAA8AAAABAAMAAAAMAA4AAAABAAIAAAAMAA0AAAABAAIAAAAMAAwAAAABAAIAAAAMAAsAAAABAAIAAAALAA8AAAABAAMAAAALAA4AAAABAAIAAAALAA0AAAABAAIAAAALAAwAAAABAAIAAAALAAsAAAABAAIAAAAKAA8AAAABAAMAAAAKAA4AAAABAAIAAAAKAA0AAAABAAIAAAAKAAwAAAABAAIAAAAKAAsAAAABAAIAAAAJAA8AAAABAAMAAAAJAA4AAAABAAIAAAAJAA0AAAABAAIAAAAJAAwAAAABAAIAAAAJAAsAAAABAAIAAAAIAA8AAAABAAMAAAAIAA4AAAABAAIAAAAIAA0AAAABAAIAAAAIAAwAAAABAAIAAAAIAAsAAAABAAIAAAAHAA8AAAABAAMAAAAHAA4AAAABAAIAAAAHAA0AAAABAAIAAAAHAAwAAAABAAIAAAAHAAsAAAABAAIAAAAGAA8AAAABAAMAAAAGAA4AAAABAAIAAAAGAA0AAAABAAIAAAAGAAwAAAABAAIAAAAGAAsAAAABAAIAAAAFAA8AAAABAAMAAAAFAA4AAAABAAIAAAAFAA0AAAABAAIAAAAFAAwAAAABAAIAAAAFAAsAAAABAAIAAAAEAA8AAAABAAMAAAAEAA4AAAABAAIAAAAEAA0AAAABAAIAAAAEAAwAAAABAAIAAAAEAAsAAAABAAIAAAADAA8AAAABAAMAAAADAA4AAAABAAIAAAADAA0AAAABAAIAAAADAAwAAAABAAIAAAADAAsAAAABAAIAAAACAA8AAAABAAMAAAACAA4AAAABAAIAAAACAA0AAAABAAIAAAACAAwAAAABAAIAAAACAAsAAAABAAIAAAABAA8AAAABAAMAAAABAA4AAAABAAIAAAABAA0AAAABAAIAAAABAAwAAAABAAIAAAABAAsAAAABAAIAAAAAAA8AAAABAAMAAAAAAA4AAAABAAIAAAAAAA0AAAABAAIAAAAAAAwAAAABAAIAAAAAAAsAAAABAAIAAAD//w8AAAABAAMAAAD//w4AAAABAAIAAAD//w0AAAABAAIAAAD//wwAAAABAAIAAAD//wsAAAABAAIAAAD+/w8AAAABAAMAAAD+/w4AAAABAAIAAAD+/w0AAAABAAIAAAD+/wwAAAABAAIAAAD+/wsAAAABAAIAAAD9/w8AAAABAAMAAAD9/w4AAAABAAIAAAD9/w0AAAABAAIAAAD9/wwAAAABAAIAAAD9/wsAAAABAAIAAAD8/w8AAAABAAMAAAD8/w4AAAABAAIAAAD8/w0AAAABAAIAAAD8/wwAAAABAAIAAAD8/wsAAAABAAIAAAD7/w8AAAABAAMAAAD7/w4AAAABAAIAAAD7/w0AAAABAAIAAAD7/wwAAAABAAIAAAD7/wsAAAABAAIAAAD6/w8AAAABAAMAAAD6/w4AAAABAAIAAAD6/w0AAAABAAIAAAD6/wwAAAABAAIAAAD6/wsAAAABAAIAAAD5/w8AAAABAAMAAAD5/w4AAAABAAIAAAD5/w0AAAABAAIAAAD5/wwAAAABAAIAAAD5/wsAAAABAAIAAAD4/w8AAAABAAMAAAD4/w4AAAABAAIAAAD4/w0AAAABAAIAAAD4/wwAAAABAAIAAAD4/wsAAAABAAIAAAD3/w8AAAABAAMAAAD3/w4AAAABAAIAAAD3/w0AAAABAAIAAAD3/wwAAAABAAIAAAD3/wsAAAABAAIAAAD2/w8AAAABAAMAAAD2/w4AAAABAAIAAAD2/w0AAAABAAIAAAD2/wwAAAABAAIAAAD2/wsAAAABAAIAAAD1/w8AAAABAAMAAAD1/w4AAAABAAIAAAD1/w0AAAABAAIAAAD1/wwAAAABAAIAAAD1/wsAAAABAAIAAAD0/w8AAAABAAMAAAD0/w4AAAABAAIAAAD0/w0AAAABAAIAAAD0/wwAAAABAAIAAAD0/wsAAAABAAIAAADz/w8AAAABAAMAAADz/w4AAAABAAIAAADz/w0AAAABAAIAAADz/wwAAAABAAIAAADz/wsAAAABAAIAAADy/w8AAAABAAMAAADy/w4AAAABAAIAAADy/w0AAAABAAIAAADy/wwAAAABAAIAAADy/wsAAAABAAIAAADx/w8AAAABAAMAAADx/w4AAAABAAIAAADx/w0AAAABAAIAAADx/wwAAAABAAIAAADx/wsAAAABAAIAAADw/w8AAAABAAMAAADw/w4AAAABAAIAAADw/w0AAAABAAIAAADw/wwAAAABAAIAAADw/wsAAAABAAIAAADv/w8AAAABAAMAAADv/w4AAAABAAIAAADv/w0AAAABAAIAAADv/wwAAAABAAIAAADv/wsAAAABAAIAAADu/w8AAAABAAMAAADu/w4AAAABAAIAAADu/w0AAAABAAIAAADu/wwAAAABAAIAAADu/wsAAAABAAIAAADt/w8AAAABAAMAAADs/w8AAAABAAMAAADr/w8AAAABAAMAAADq/w8AAAAAAAMAAAAXAA8AAAACAAMAAAAXAA4AAAACAAIAAAAXAA0AAAACAAIAAAAXAAwAAAACAAIAAAAXAAsAAAACAAIAAAAXAAoAAAACAAIAAAAXAAkAAAACAAIAAAAXAAgAAAACAAIAAAAXAAcAAAACAAIAAAAXAAYAAAACAAIAAAAXAAUAAAACAAIAAAAXAAQAAAACAAIAAAAXAAMAAAACAAIAAAAXAAIAAAACAAIAAAAXAAEAAAACAAIAAAAXAAAAAAACAAIAAAAXAP//AAACAAIAAAAXAP7/AAACAAIAAAAXAP3/AAACAAIAAAAXAPz/AAACAAIAAAAXAPv/AAACAAIAAAAXAPr/AAACAAIAAAAXAPn/AAACAAIAAAAXAPj/AAACAAIAAAAXAPf/AAACAAIAAAAXAPb/AAACAAIAAAAXAPX/AAACAAIAAAAXAPT/AAACAAIAAAAXAPP/AAACAAIAAAAXAPL/AAACAAEAAAAWAA8AAAABAAMAAAAWAA4AAAABAAIAAAAWAA0AAAABAAIAAAAWAAwAAAABAAIAAAAWAAsAAAABAAIAAAAWAAoAAAABAAIAAAAWAAkAAAABAAIAAAAWAAgAAAABAAIAAAAWAAcAAAABAAIAAAAWAAYAAAABAAIAAAAWAAUAAAABAAIAAAAWAAQAAAABAAIAAAAWAAMAAAABAAIAAAAWAAIAAAABAAIAAAAWAAEAAAABAAIAAAAWAAAAAAABAAIAAAAWAP//AAABAAIAAAAWAP7/AAABAAIAAAAWAP3/AAABAAIAAAAWAPz/AAABAAIAAAAWAPv/AAABAAIAAAAWAPr/AAABAAIAAAAWAPn/AAABAAIAAAAWAPj/AAABAAIAAAAWAPf/AAABAAIAAAAWAPb/AAABAAIAAAAWAPX/AAABAAIAAAAWAPT/AAABAAIAAAAWAPP/AAABAAIAAAAWAPL/AAABAAEAAAAVAA8AAAABAAMAAAAVAA4AAAABAAIAAAAVAA0AAAABAAIAAAAVAAwAAAABAAIAAAAVAAsAAAABAAIAAAAVAAoAAAABAAIAAAAVAAkAAAABAAIAAAAVAAgAAAABAAIAAAAVAAcAAAABAAIAAAAVAAYAAAABAAIAAAAVAAUAAAABAAIAAAAVAAQAAAABAAIAAAAVAAMAAAABAAIAAAAVAAIAAAABAAIAAAAVAAEAAAABAAIAAAAVAAAAAAABAAIAAAAVAP//AAABAAIAAAAVAP7/AAABAAIAAAAVAP3/AAABAAIAAAAVAPz/AAABAAIAAAAVAPv/AAABAAIAAAAVAPr/AAABAAIAAAAVAPn/AAABAAIAAAAVAPj/AAABAAIAAAAVAPf/AAABAAIAAAAVAPb/AAABAAIAAAAVAPX/AAABAAIAAAAVAPT/AAABAAIAAAAVAPP/AAABAAIAAAAVAPL/AAABAAEAAAAUAAkAAAABAAIAAAAUAAgAAAABAAIAAAAUAAcAAAABAAIAAAAUAAYAAAABAAIAAAAUAAUAAAABAAIAAAAUAAQAAAABAAIAAAAUAAMAAAABAAIAAAAUAAIAAAABAAIAAAAUAAEAAAABAAIAAAAUAAAAAAABAAIAAAAUAP//AAABAAIAAAAUAP7/AAABAAIAAAAUAP3/AAABAAIAAAAUAPz/AAABAAIAAAAUAPv/AAABAAIAAAAUAPr/AAABAAIAAAAUAPn/AAABAAIAAAAUAPj/AAABAAIAAAAUAPf/AAABAAIAAAAUAPb/AAABAAIAAAAUAPX/AAABAAIAAAAUAPT/AAABAAIAAAAUAPP/AAABAAIAAAAUAPL/AAABAAEAAAATAAkAAAABAAIAAAATAAgAAAABAAIAAAATAAcAAAABAAIAAAATAAYAAAABAAIAAAATAAUAAAABAAIAAAATAAQAAAABAAIAAAATAAMAAAABAAIAAAATAAIAAAABAAIAAAATAAEAAAABAAIAAAATAAAAAAABAAIAAAATAP//AAABAAIAAAATAP7/AAABAAIAAAATAP3/AAABAAIAAAATAPz/AAABAAIAAAATAPv/AAABAAIAAAATAPr/AAABAAIAAAATAPn/AAABAAIAAAATAPj/AAABAAIAAAATAPf/AAABAAIAAAATAPb/AAABAAIAAAATAPX/AAABAAIAAAATAPT/AAABAAIAAAATAPP/AAABAAIAAAATAPL/AAABAAEAAAASAAkAAAABAAIAAAASAAgAAAABAAIAAAASAAcAAAABAAIAAAASAAYAAAABAAIAAAASAAUAAAABAAIAAAASAAQAAAABAAIAAAASAAMAAAABAAIAAAASAAIAAAABAAIAAAASAAEAAAABAAIAAAASAAAAAAABAAIAAAASAP//AAABAAIAAAASAP7/AAABAAIAAAASAP3/AAABAAIAAAASAPz/AAABAAIAAAASAPv/AAABAAIAAAASAPr/AAABAAIAAAASAPn/AAABAAIAAAASAPj/AAABAAIAAAASAPf/AAABAAIAAAASAPb/AAABAAIAAAASAPX/AAABAAIAAAASAPT/AAABAAIAAAASAPP/AAABAAIAAAASAPL/AAAEAAEAAAARAPL/AAABAAIAAAASAPH/AAACAAIAAAASAPD/AAACAAEAAAARAPH/AAABAAIAAAARAPD/AAABAAEAAAAQAPX/AAABAAIAAAAQAPT/AAABAAIAAAAQAPP/AAABAAIAAAAQAPL/AAABAAIAAAAQAPH/AAABAAIAAAAQAPD/AAABAAEAAAAPAPX/AAABAAIAAAAPAPT/AAABAAIAAAAPAPP/AAABAAIAAAAPAPL/AAABAAIAAAAPAPH/AAABAAIAAAAPAPD/AAABAAEAAAAOAPX/AAABAAIAAAAOAPT/AAABAAIAAAAOAPP/AAABAAIAAAAOAPL/AAABAAIAAAAOAPH/AAABAAIAAAAOAPD/AAABAAEAAAANAPX/AAABAAIAAAANAPT/AAABAAIAAAANAPP/AAABAAIAAAANAPL/AAABAAIAAAANAPH/AAABAAIAAAANAPD/AAABAAEAAAAMAPX/AAABAAIAAAAMAPT/AAABAAIAAAAMAPP/AAABAAIAAAAMAPL/AAABAAIAAAAMAPH/AAABAAIAAAAMAPD/AAABAAEAAAALAPX/AAABAAIAAAALAPT/AAABAAIAAAALAPP/AAABAAIAAAALAPL/AAABAAIAAAALAPH/AAABAAIAAAALAPD/AAABAAEAAAAKAPX/AAABAAIAAAAKAPT/AAABAAIAAAAKAPP/AAABAAIAAAAKAPL/AAABAAIAAAAKAPH/AAABAAIAAAAKAPD/AAABAAEAAAAJAPX/AAABAAIAAAAJAPT/AAABAAIAAAAJAPP/AAABAAIAAAAJAPL/AAABAAIAAAAJAPH/AAABAAIAAAAJAPD/AAABAAEAAAAIAPX/AAABAAIAAAAIAPT/AAABAAIAAAAIAPP/AAABAAIAAAAIAPL/AAABAAIAAAAIAPH/AAABAAIAAAAIAPD/AAABAAEAAAAHAPX/AAABAAIAAAAHAPT/AAABAAIAAAAHAPP/AAABAAIAAAAHAPL/AAABAAIAAAAHAPH/AAABAAIAAAAHAPD/AAABAAEAAAAGAPX/AAABAAIAAAAGAPT/AAABAAIAAAAGAPP/AAABAAIAAAAGAPL/AAABAAIAAAAGAPH/AAABAAIAAAAGAPD/AAABAAEAAAAFAPX/AAABAAIAAAAFAPT/AAABAAIAAAAFAPP/AAABAAIAAAAFAPL/AAABAAIAAAAFAPH/AAABAAIAAAAFAPD/AAABAAEAAAAEAPX/AAABAAIAAAAEAPT/AAABAAIAAAAEAPP/AAABAAIAAAAEAPL/AAABAAIAAAAEAPH/AAABAAIAAAAEAPD/AAABAAEAAAADAPX/AAABAAIAAAADAPT/AAABAAIAAAADAPP/AAABAAIAAAADAPL/AAABAAIAAAADAPH/AAABAAIAAAADAPD/AAABAAEAAAACAPX/AAABAAIAAAACAPT/AAABAAIAAAACAPP/AAABAAIAAAACAPL/AAABAAIAAAACAPH/AAABAAIAAAACAPD/AAABAAEAAAABAPX/AAABAAIAAAABAPT/AAABAAIAAAABAPP/AAABAAIAAAABAPL/AAABAAIAAAABAPH/AAABAAIAAAABAPD/AAABAAEAAAAAAPX/AAABAAIAAAAAAPT/AAABAAIAAAAAAPP/AAABAAIAAAAAAPL/AAABAAIAAAAAAPH/AAABAAIAAAAAAPD/AAABAAEAAAD///X/AAABAAIAAAD///T/AAABAAIAAAD///P/AAABAAIAAAD///L/AAABAAIAAAD///H/AAABAAIAAAD///D/AAABAAEAAAD+//X/AAABAAIAAAD+//T/AAABAAIAAAD+//P/AAABAAIAAAD+//L/AAABAAIAAAD+//H/AAABAAIAAAD+//D/AAABAAEAAAD9//X/AAABAAIAAAD9//T/AAABAAIAAAD9//P/AAABAAIAAAD9//L/AAABAAIAAAD9//H/AAABAAIAAAD9//D/AAABAAEAAAD8//X/AAABAAIAAAD8//T/AAABAAIAAAD8//P/AAABAAIAAAD8//L/AAABAAIAAAD8//H/AAABAAIAAAD8//D/AAABAAEAAAD7//X/AAABAAIAAAD7//T/AAABAAIAAAD7//P/AAABAAIAAAD7//L/AAABAAIAAAD7//H/AAABAAIAAAD7//D/AAABAAEAAAD6//X/AAABAAIAAAD6//T/AAABAAIAAAD6//P/AAABAAIAAAD6//L/AAABAAIAAAD6//H/AAABAAIAAAD6//D/AAABAAEAAAD5//X/AAABAAIAAAD5//T/AAABAAIAAAD5//P/AAABAAIAAAD5//L/AAABAAIAAAD5//H/AAABAAIAAAD5//D/AAABAAEAAAD4//X/AAABAAIAAAD4//T/AAABAAIAAAD4//P/AAABAAIAAAD4//L/AAABAAIAAAD4//H/AAABAAIAAAD4//D/AAABAAEAAAD3//X/AAABAAIAAAD3//T/AAABAAIAAAD3//P/AAABAAIAAAD3//L/AAABAAIAAAD3//H/AAABAAIAAAD3//D/AAABAAEAAAD2//X/AAABAAIAAAD2//T/AAABAAIAAAD2//P/AAABAAIAAAD2//L/AAABAAIAAAD2//H/AAABAAIAAAD2//D/AAABAAEAAAD1//X/AAABAAIAAAD1//T/AAABAAIAAAD1//P/AAABAAIAAAD1//L/AAABAAIAAAD1//H/AAABAAIAAAD1//D/AAABAAEAAAD0//X/AAABAAIAAAD0//T/AAABAAIAAAD0//P/AAABAAIAAAD0//L/AAABAAIAAAD0//H/AAABAAIAAAD0//D/AAABAAEAAADz//X/AAABAAIAAADz//T/AAABAAIAAADz//P/AAABAAIAAADz//L/AAABAAIAAADz//H/AAABAAIAAADz//D/AAABAAEAAADy//X/AAABAAIAAADy//T/AAABAAIAAADy//P/AAABAAIAAADy//L/AAABAAIAAADy//H/AAABAAIAAADy//D/AAABAAEAAADx//X/AAABAAIAAADx//T/AAABAAIAAADx//P/AAABAAIAAADx//L/AAABAAIAAADx//H/AAABAAIAAADx//D/AAABAAEAAADw//X/AAABAAIAAADw//T/AAABAAIAAADw//P/AAABAAIAAADw//L/AAABAAIAAADw//H/AAABAAIAAADw//D/AAABAAEAAADv//X/AAABAAIAAADv//T/AAABAAIAAADv//P/AAABAAIAAADv//L/AAABAAIAAADv//H/AAABAAIAAADv//D/AAABAAEAAADu//P/AAABAAIAAADu//L/AAABAAIAAADu//H/AAABAAIAAADu//D/AAABAAEAAADt//P/AAABAAIAAADt//L/AAABAAIAAADt//H/AAABAAIAAADt//D/AAABAAEAAADs//P/AAABAAIAAADs//L/AAABAAIAAADs//H/AAABAAIAAADs//D/AAABAAEAAADr//P/AAABAAIAAADr//L/AAABAAIAAADr//H/AAABAAIAAADr//D/AAABAAEAAADq//P/AAAAAAIAAADq//L/AAAAAAIAAADq//H/AAAAAAIAAADq//D/AAAAAAEAAAA=")
+tile_set = ExtResource("1_3dk0c")
+script = SubResource("GDScript_p0e3q")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -330.0
+offset_top = -186.0
+offset_right = 330.0
+offset_bottom = 204.0
+color = Color(1, 1, 1, 0)
+
+[node name="Entity_2" parent="." instance=ExtResource("2_p0e3q")]
+unique_name_in_owner = true
+position = Vector2(0, 121)
+"生命_上线" = 6
+
+[node name="boss" type="CharacterBody2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-7, 22)
+collision_layer = 0
+script = SubResource("GDScript_v6nk4")
+"质量" = 999.0
+
+[node name="Panel" type="Panel" parent="boss"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -42.0
+offset_right = 78.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_p0e3q")
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="boss/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 64
+text = "键盘"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="boss"]
+position = Vector2(0.25, -3.25)
+shape = SubResource("RectangleShape2D_v6nk4")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="boss"]
+
+[node name="血条" type="ProgressBar" parent="boss/CanvasLayer"]
+unique_name_in_owner = true
+self_modulate = Color(1, 0.56576514, 0.56576514, 1)
+offset_left = 344.0
+offset_top = 43.0
+offset_right = 863.0
+offset_bottom = 64.0
+value = 100.0
+
+[node name="护盾" type="ProgressBar" parent="boss/CanvasLayer/血条"]
+unique_name_in_owner = true
+modulate = Color(0.66441286, 0.73306113, 1, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 30.735
+offset_right = 1.0
+offset_bottom = 30.735043
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+metadata/_edit_use_anchors_ = true
+
+[node name="右" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="右"]
+position = Vector2(259, 146)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D2" type="Sprite2D" parent="右"]
+position = Vector2(259, 115)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D3" type="Sprite2D" parent="右"]
+position = Vector2(259, 86)
+texture = ExtResource("3_v6nk4")
+
+[node name="生成位" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -286.25
+offset_top = -55.125
+offset_right = 286.25
+offset_bottom = 55.125
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 100
+
+[node name="Button" type="Button" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+text = "重开"
+script = SubResource("GDScript_ier3d")
+
+[node name="Button2" type="Button" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+text = "复活"
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer/Button2"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -21.75
+offset_top = -24.875
+offset_right = 20.25
+offset_bottom = -7.875
+grow_horizontal = 2
+grow_vertical = 0
+text = "次数3"
+metadata/_edit_use_anchors_ = true
+
+[node name="Button" type="Button" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -101.0
+offset_right = 150.0
+offset_bottom = 101.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "开始游戏
+
+(难度偏高)"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.47058824)
+offset_left = -136.0
+offset_top = -46.0
+offset_right = 120.0
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 128
+text = "胜利"
+script = SubResource("GDScript_3w4e6")
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="中" type="Marker2D" parent="Node2D"]
+unique_name_in_owner = true
+position = Vector2(-5, -88)
+
+[node name="左" type="Marker2D" parent="Node2D"]
+unique_name_in_owner = true
+position = Vector2(-179, -17)
+
+[node name="右" type="Marker2D" parent="Node2D"]
+unique_name_in_owner = true
+position = Vector2(185, -21)
+
+[node name="怪物初始位" type="Marker2D" parent="Node2D"]
+unique_name_in_owner = true
+position = Vector2(-233, 34)
+
+[node name="怪物初始位2" type="Marker2D" parent="Node2D"]
+unique_name_in_owner = true
+position = Vector2(229.55, 34)
+
+[node name="中" type="Node2D" parent="."]
+position = Vector2(5, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="中"]
+position = Vector2(-252, -124)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D2" type="Sprite2D" parent="中"]
+position = Vector2(-217, -125)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D3" type="Sprite2D" parent="中"]
+position = Vector2(-176, -124)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D4" type="Sprite2D" parent="中"]
+position = Vector2(-137, -122)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D5" type="Sprite2D" parent="中"]
+position = Vector2(-97, -123)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D6" type="Sprite2D" parent="中"]
+position = Vector2(-62, -124)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D7" type="Sprite2D" parent="中"]
+position = Vector2(-24, -121)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D8" type="Sprite2D" parent="中"]
+position = Vector2(11, -122)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D9" type="Sprite2D" parent="中"]
+position = Vector2(49, -122)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D10" type="Sprite2D" parent="中"]
+position = Vector2(84, -123)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D11" type="Sprite2D" parent="中"]
+position = Vector2(122, -120)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D12" type="Sprite2D" parent="中"]
+position = Vector2(165, -121)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D13" type="Sprite2D" parent="中"]
+position = Vector2(204, -121)
+texture = ExtResource("3_v6nk4")
+
+[node name="Sprite2D14" type="Sprite2D" parent="中"]
+position = Vector2(242, -122)
+texture = ExtResource("3_v6nk4")
+
+[node name="Label2" type="Label" parent="."]
+offset_left = -294.0
+offset_top = -131.0
+offset_right = -278.0
+offset_bottom = 126.0
+text = "左边招怪,存在小概率bug"
+paragraph_separator = ""
+
+[connection signal="死亡" from="Entity_2" to="." method="_on_entity_2_死亡"]
+[connection signal="下落" from="boss" to="." method="下落"]
+[connection signal="召唤" from="boss" to="." method="生成怪物"]
+[connection signal="水平弹幕" from="boss" to="." method="_on_boss_水平弹幕"]
+[connection signal="生命_" from="boss" to="boss" method="_on_生命_"]
+[connection signal="胜利" from="boss" to="Label" method="_on_boss_胜利"]
+[connection signal="pressed" from="CanvasLayer/HBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="CanvasLayer/Button" to="." method="_on_button_pressed"]

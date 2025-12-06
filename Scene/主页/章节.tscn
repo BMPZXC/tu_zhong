@@ -114,8 +114,9 @@ layout_mode = 2
 [node name="Control11" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
 layout_mode = 2
 "根" = NodePath("../../..")
-"需要进度" = 100
-"场景" = ""
+"需要进度" = 4
+"书名" = "彩蛋.弹幕狂欢"
+"场景" = "res://Scene/彩蛋之弹幕狂欢/弹幕狂欢.tscn"
 
 [node name="Control12" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
 layout_mode = 2
@@ -142,6 +143,12 @@ layout_mode = 2
 "场景" = ""
 
 [node name="Control16" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
+layout_mode = 2
+"根" = NodePath("../../..")
+"需要进度" = 100
+"场景" = ""
+
+[node name="Control17" parent="Control/HBoxContainer" node_paths=PackedStringArray("根") instance=ExtResource("1_v3q4b")]
 layout_mode = 2
 "根" = NodePath("../../..")
 "需要进度" = 100

@@ -539,7 +539,9 @@ func 攻击():
 func 盾反回复(a: 生物) -> void:
 	if entity_2.生命<entity_2.生命_上线:
 		entity_2.生命+=1
+	攻击区.有伤=false
 	攻击区._on_body_entered(a)
+	攻击区.有伤=true
 	var b=(a.global_position-a.global_position).normalized()
 	a.velocity+=b/a.质量*200*1
 	play(\"受击\")
@@ -681,7 +683,7 @@ alignment = 2
 [node name="鼠标左键" parent="CanvasLayer/右下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = ""
-"冷却值" = -8340.16271963184
+"冷却值" = -8340.26641052073
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标左键"]
 layout_mode = 1
@@ -702,7 +704,7 @@ texture = ExtResource("8_ajqgl")
 layout_mode = 2
 "按键" = ""
 "技能_图标" = ExtResource("8_0qels")
-"冷却值" = -8340.16271963184
+"冷却值" = -8340.26641052073
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标右键"]
 layout_mode = 1
@@ -735,19 +737,19 @@ theme_override_constants/separation = 20
 layout_mode = 2
 "按键" = "A"
 "技能_图标" = ExtResource("9_v6kgo")
-"冷却值" = -8340.16271963184
+"冷却值" = -8340.26641052073
 
 [node name="技能按钮2" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "w"
 "技能_图标" = ExtResource("10_ajqgl")
-"冷却值" = -8340.16271963184
+"冷却值" = -8340.26641052073
 
 [node name="技能按钮3" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "d"
 "技能_图标" = ExtResource("11_vta88")
-"冷却值" = -8340.16271963184
+"冷却值" = -8340.26641052073
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -780,19 +782,19 @@ alignment = 1
 layout_mode = 2
 "按键" = "1"
 "技能_图标" = ExtResource("15_g4f1u")
-"冷却值" = -20.014928111110645
+"冷却值" = -20.11861899999969
 
 [node name="技能按钮2" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "2"
 "技能_图标" = ExtResource("18_8ndxi")
-"冷却值" = -20.11229722222185
+"冷却值" = -20.215988111110892
 
 [node name="技能按钮3" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "3"
 "技能_图标" = ExtResource("20_vmob0")
-"冷却值" = -20.107906777777323
+"冷却值" = -20.211597666666364
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)

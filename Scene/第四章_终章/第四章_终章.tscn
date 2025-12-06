@@ -420,13 +420,13 @@ A-MEN：[b]那就把这座桥，当成你曾经来过这里的证明[/b]。
 	谢幕()
 
 func 谢幕():
-	var main:Control = preload(\"res://Scene/主页/主页.tscn\").instantiate()
-	main.visible=false
-	get_tree().root.add_child(main)
+	
 	var thanks = preload(\"res://Scene/主页/鸣谢2.tscn\").instantiate()
 	get_tree().root.add_child(thanks)
-	await get_tree().create_timer(1.2).timeout
-	main.visible=true
+	await get_tree().create_timer(1.1).timeout
+	var main:CanvasItem = preload(\"res://Scene/彩蛋之弹幕狂欢/弹幕狂欢.tscn\").instantiate()
+	get_tree().root.add_child(main)
+	get_tree().root.move_child(main,-2)
 	queue_free()
 	
 "

@@ -115,7 +115,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x+=(100*sign(a)-velocity.x)*delta*7
 
 		if not is_on_floor():
-			velocity.y+=10
+			velocity.y+=10*60*delta
 			if 空中跳 and Input.is_action_just_pressed("跳"):
 				空中跳=false
 				velocity.y=-200

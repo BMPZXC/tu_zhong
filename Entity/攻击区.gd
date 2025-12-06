@@ -7,7 +7,7 @@ func _ready() -> void:
 	if not body_entered.is_connected(_on_body_entered):
 		body_entered.connect(_on_body_entered)
 		
-
+@export var 有伤=true
 func _on_body_entered(body: Node2D) -> void:
 	if body is 生物:
 		var b:Vector2
@@ -18,5 +18,6 @@ func _on_body_entered(body: Node2D) -> void:
 			assert(a.get("图片_方向"))
 			b.x=b.x*a.get("图片_方向")
 		body.velocity+=b*击飞强度/body.质量*200
-		body.受击(a)
+		if 有伤:
+			body.受击(a)
 		命中.emit()

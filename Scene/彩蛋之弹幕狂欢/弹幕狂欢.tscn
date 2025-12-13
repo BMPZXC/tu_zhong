@@ -41,6 +41,7 @@ func 可继续():
 	if %Entity_2.生命>0:
 		继续.emit()
 @onready var 右: Node2D = $右
+var 限制弹幕_生成怪物:int=15
 var 弹幕=preload(\"res://Scene/彩蛋之弹幕狂欢/弹幕.tscn\")
 func 水平弹幕(位置):
 	var a=400
@@ -75,6 +76,8 @@ func 生成弹幕组(位置,字:String,方向:float,s:float):  ##水平弹幕
 		var a=生成弹幕(位置,字[i],Vector2(方向,0))
 		a.计分.connect(func ():%boss.护盾减少(f))
 		a.撞墙.connect(func ():
+			if 限制弹幕_生成怪物<=0:return
+			限制弹幕_生成怪物-=1
 			var r:生物= ziti.instantiate()
 			r.global_position=a.global_position
 			r.字=a.字
@@ -82,6 +85,7 @@ func 生成弹幕组(位置,字:String,方向:float,s:float):  ##水平弹幕
 			r.生命_上线=1
 			%\"生成位\".add_child(r)
 			r.死亡.connect(func ():%boss.护盾减少(f))
+			r.tree_exited.connect(func ():限制弹幕_生成怪物+=1)
 		)
 		%\"生成位\".add_child(a)
 		await get_tree().create_timer(b).timeout
@@ -136,12 +140,12 @@ func 生成怪物():
 		r.生命_上线=生命
 		敌人数+=1
 		%\"生成位\".add_child(r)
-		r.死亡.connect(生成怪物_击破)
+		r.死亡.connect(生成怪物_击破.bind(0.5*生命))
 		c.queue_free()
 	
 var 敌人数:int=0
-func 生成怪物_击破():
-	%boss.护盾减少(5)
+func 生成怪物_击破(a):
+	%boss.护盾减少(5*a)
 	敌人数-=1
 	if %boss.打断:return
 	if 敌人数<=0:
@@ -296,6 +300,7 @@ func 掉落(delta: float):
 	if 掉落时间<=0:
 		if %护盾.value<=0:
 			%护盾.value=100
+			panel.self_modulate=Color(1.0, 1.0, 1.0, 1.0)
 		set_collision_layer_value(3,false)
 		打断=false
 		模式= 浮空
@@ -321,9 +326,11 @@ func 切换():
 	b.call()
 func 切换_水平弹幕():
 	var a=get_tree().create_tween()
+	
 	a.tween_property(self,\"global_position\",%右.global_position,2)
 	await a.finished
 	水平弹幕.emit()
+	
 
 signal 召唤
 func 切换_召唤():
@@ -368,6 +375,7 @@ script/source = "extends Label
 
 
 func _on_boss_胜利() -> void:
+	设置.保存成功(存档.存储_剧情进度(5))
 	visible=true
 "
 
@@ -625,14 +633,6 @@ texture = ExtResource("3_v6nk4")
 [node name="Sprite2D14" type="Sprite2D" parent="中"]
 position = Vector2(242, -122)
 texture = ExtResource("3_v6nk4")
-
-[node name="Label2" type="Label" parent="."]
-offset_left = -294.0
-offset_top = -131.0
-offset_right = -278.0
-offset_bottom = 126.0
-text = "左边招怪,存在小概率bug"
-paragraph_separator = ""
 
 [connection signal="死亡" from="Entity_2" to="." method="_on_entity_2_死亡"]
 [connection signal="下落" from="boss" to="." method="下落"]

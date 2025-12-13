@@ -1,6 +1,6 @@
 extends AnimationPlayer
 
-@onready var animation_player: AnimationPlayer = $CanvasLayer2/Panel/AnimationPlayer
+@onready var animation_player: AnimationPlayer = $CanvasLayer3/Panel/AnimationPlayer
 
 func 保存成功(a:bool):
 	if a==true:

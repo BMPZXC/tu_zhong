@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dbsv222vu6pxw" path="res://Scene/textbox/text_file_reader.gd" id="1_qvppv"]
 [ext_resource type="PackedScene" uid="uid://c70y4sq4ogtqt" path="res://Scene/textbox/剧本.tscn" id="3_eupp5"]
-[ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://addons/dialogue_manager/dialogue_label.tscn" id="3_xob1p"]
+[ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://Scene/textbox/dialogue_label.tscn" id="3_xob1p"]
 [ext_resource type="Texture2D" uid="uid://dv1swcxprdj2n" path="res://Scene/textbox/剧本.png" id="4_pnvkq"]
 [ext_resource type="AudioStream" uid="uid://bgd40bylkxyp0" path="res://声音/打字_1.mp3" id="5_xob1p"]
 

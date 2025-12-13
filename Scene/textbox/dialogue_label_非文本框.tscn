@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://cltb6qvsdknov"]
+
+[ext_resource type="Script" uid="uid://g32um0mltv5d" path="res://Scene/textbox/dialogue_label.gd" id="1_d1nuh"]
+
+[node name="DialogueLabel" type="RichTextLabel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+shortcut_keys_enabled = false
+horizontal_alignment = 1
+vertical_alignment = 1
+meta_underlined = false
+hint_underlined = false
+deselect_on_focus_loss_enabled = false
+visible_characters_behavior = 1
+script = ExtResource("1_d1nuh")
+seconds_per_step = 0.1
+pause_at_characters = ""
+skip_pause_at_character_if_followed_by = ""
+skip_pause_at_abbreviations = PackedStringArray("Mr", "Mrs", "Ms", "Dr", "etc", "eg", "ex")
+seconds_per_pause_step = 0.1

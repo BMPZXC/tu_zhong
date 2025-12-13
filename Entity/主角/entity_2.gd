@@ -135,10 +135,15 @@ func _physics_process(delta: float) -> void:
 func 闪现_(_delta: float) -> void:
 	velocity=Vector2(400*图片_方向,0)
 	move_and_slide()
-func 金身():
+
+var _金身_注册:Dictionary={} ##用于多个调用
+func 金身(名字:String):
+	_金身_注册.set(名字,true)
 	set_collision_layer_value(2,false)
-func 金身_取消():
-	set_collision_layer_value(2,true)
+func 金身_取消(名字:String):
+	_金身_注册.erase(名字)
+	if _金身_注册.is_empty():
+		set_collision_layer_value(2,true)
 
 @onready var 鼠标右键 = $CanvasLayer/右下/鼠标右键
 var 可_闪现:bool=true
@@ -146,9 +151,9 @@ func 闪现():
 	可_闪现=false
 	set_physics_process(true)
 	模式=闪现_
-	金身()
+	金身("闪现")
 	await  get_tree().create_timer(0.25).timeout
-	金身_取消()
+	金身_取消("闪现")
 	模式=空
 	鼠标右键.冷却()
 	#可_闪现=false
@@ -161,7 +166,16 @@ func _on_move_gravity_by_input_转向() -> void:
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 func _减血() -> void:
-	金身()
+	#if get_collision_layer_value(2):
+	金身("减血")
 	animation_player.play("受击")
 	await animation_player.animation_finished
-	金身_取消()
+	金身_取消("减血")
+
+func 受击(a:生物):
+	if not get_collision_layer_value(2):return
+	生命-=1
+	if 生命<=0:
+		死亡.emit()
+	else :
+		受击_攻击方.emit(a)

@@ -28,6 +28,7 @@ signal started_typing()
 signal finished_typing()
 
 ## [Deprecated] No longer emitted.
+@warning_ignore("unused_signal")
 signal paused_typing(duration: float)
 
 
@@ -66,6 +67,7 @@ var dialogue_line:
 ## Whether the label is currently typing itself out.
 var is_typing: bool = false:
 	set(value):
+		@warning_ignore("shadowed_variable_base_class")
 		var is_finished: bool = _is_typing != value and value == false and visible_characters == get_total_character_count()
 		_is_typing = value
 		if is_finished:
@@ -147,6 +149,7 @@ func _type_next(delta: float, seconds_needed: float) -> void:
 		if _is_awaiting_mutation: return
 
 	# Pause on characters like "."
+	@warning_ignore("incompatible_ternary")
 	var waiting_seconds: float = seconds_per_pause_step if _should_auto_pause() else 0
 	if _last_wait_index != visible_characters and waiting_seconds > 0:
 		_last_wait_index = visible_characters

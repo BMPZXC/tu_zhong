@@ -14,7 +14,7 @@
 script/source = "extends Control
 
 func _on_start_button_pressed() -> void:
-	转场.切换章节_并丢弃(self,\"res://Scene/主页/章节.tscn\")
+	转场.切换章节_并丢弃(self,\"res://Scene/主页/章节/章节.tscn\")
 
 func _on_texture_rect_3_pressed() -> void:
 	get_tree().quit()

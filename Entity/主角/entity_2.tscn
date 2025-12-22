@@ -683,7 +683,7 @@ alignment = 2
 [node name="鼠标左键" parent="CanvasLayer/右下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = ""
-"冷却值" = -8340.378378854062
+"冷却值" = -8340.519615520729
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标左键"]
 layout_mode = 1
@@ -704,7 +704,7 @@ texture = ExtResource("8_ajqgl")
 layout_mode = 2
 "按键" = ""
 "技能_图标" = ExtResource("8_0qels")
-"冷却值" = -8340.378378854062
+"冷却值" = -8340.519615520729
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/右下/鼠标右键"]
 layout_mode = 1
@@ -726,9 +726,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = -45.0
+offset_top = -54.0
 offset_right = 294.0
-offset_bottom = 13.0
+offset_bottom = 4.0
 grow_vertical = 0
 scale = Vector2(0.5, 0.5)
 theme_override_constants/separation = 20
@@ -737,19 +737,19 @@ theme_override_constants/separation = 20
 layout_mode = 2
 "按键" = "A"
 "技能_图标" = ExtResource("9_v6kgo")
-"冷却值" = -8340.378378854062
+"冷却值" = -8340.519615520729
 
 [node name="技能按钮2" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "w"
 "技能_图标" = ExtResource("10_ajqgl")
-"冷却值" = -8340.378378854062
+"冷却值" = -8340.519615520729
 
 [node name="技能按钮3" parent="CanvasLayer/HBoxContainer2" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "d"
 "技能_图标" = ExtResource("11_vta88")
-"冷却值" = -8340.378378854062
+"冷却值" = -8340.519615520729
 
 [node name="Control" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -782,30 +782,31 @@ alignment = 1
 layout_mode = 2
 "按键" = "1"
 "技能_图标" = ExtResource("15_g4f1u")
-"冷却值" = -20.230587333333023
+"冷却值" = -20.37182399999969
 
 [node name="技能按钮2" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "2"
 "技能_图标" = ExtResource("18_8ndxi")
-"冷却值" = -20.327956444444226
+"冷却值" = -20.46919311111089
 
 [node name="技能按钮3" parent="CanvasLayer/Control/中下" instance=ExtResource("13_uhjsk")]
 layout_mode = 2
 "按键" = "3"
 "技能_图标" = ExtResource("20_vmob0")
-"冷却值" = -20.323565999999698
+"冷却值" = -20.464802666666365
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 limit_smoothed = true
 position_smoothing_enabled = true
 
-[node name="剑2" type="AnimatedSprite2D" parent="."]
+[node name="剑2" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("隐藏")]
 sprite_frames = SubResource("SpriteFrames_m75f7")
 script = SubResource("GDScript_8a2w1")
 "切换按键" = "切_剑"
 "普攻_图标" = ExtResource("15_g4f1u")
+"隐藏" = NodePath("../CanvasLayer/Control/中下/技能按钮")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="剑2"]
 root_node = NodePath("../..")
@@ -836,7 +837,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_uhjsk")
 }
 
-[node name="弓" type="AnimatedSprite2D" parent="."]
+[node name="弓" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("隐藏")]
 sprite_frames = SubResource("SpriteFrames_g4f1u")
 animation = &"蓄力"
 frame = 3
@@ -844,12 +845,14 @@ frame_progress = 1.0
 script = SubResource("GDScript_8ndxi")
 "切换按键" = "切_弓"
 "普攻_图标" = ExtResource("18_8ndxi")
+"隐藏" = NodePath("../CanvasLayer/Control/中下/技能按钮2")
 
-[node name="盾" type="AnimatedSprite2D" parent="."]
+[node name="盾" type="AnimatedSprite2D" parent="." node_paths=PackedStringArray("隐藏")]
 sprite_frames = SubResource("SpriteFrames_neb7i")
 script = SubResource("GDScript_xcxbn")
 "切换按键" = "切_盾"
 "普攻_图标" = ExtResource("20_vmob0")
+"隐藏" = NodePath("../CanvasLayer/Control/中下/技能按钮3")
 
 [node name="HealthComponent" type="CharacterBody2D" parent="盾"]
 position = Vector2(1, -5)

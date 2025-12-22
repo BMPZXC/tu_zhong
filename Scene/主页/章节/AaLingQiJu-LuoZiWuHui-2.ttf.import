@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://bxei370kt6pd1"
-path="res://.godot/imported/AaLingQiJu-LuoZiWuHui-2.ttf-0af7cc95279211c278153ad997d8fddc.fontdata"
+path="res://.godot/imported/AaLingQiJu-LuoZiWuHui-2.ttf-a763791c69ea0e170b82b45ad0f8abad.fontdata"
 
 [deps]
 
-source_file="res://Scene/主页/AaLingQiJu-LuoZiWuHui-2.ttf"
-dest_files=["res://.godot/imported/AaLingQiJu-LuoZiWuHui-2.ttf-0af7cc95279211c278153ad997d8fddc.fontdata"]
+source_file="res://Scene/主页/章节/AaLingQiJu-LuoZiWuHui-2.ttf"
+dest_files=["res://.godot/imported/AaLingQiJu-LuoZiWuHui-2.ttf-a763791c69ea0e170b82b45ad0f8abad.fontdata"]
 
 [params]
 

@@ -9,16 +9,7 @@ class_name Player_2
 func 重置():
 	生命=生命_上线
 	position=_初始位置
-	#await get_tree().physics_frame  无法处理 受击 的 击飞
-	#velocity=Vector2.ZERO
 
-#func 禁用输入(a:bool):   ##用于剧情 以及 战斗
-	#set_physics_process(!a)
-	#禁用输入=a
-	
-#func 冻结(a:bool):###用于跳转场景,但保留当前
-	#禁用输入=true
-	#camera_2d.enabled=!a
 
 var 初始缩放:Vector2
 func 镜头至屏幕(a:Control):##用于剧情
@@ -67,6 +58,7 @@ var _初始位置:Vector2
 ############
 var 图片_方向=1
 @onready var 切:Array[职业]=[$剑2,$弓,$盾]
+
 @onready var 当前职业:职业
 var 锁定:bool=false:
 	set(a):
@@ -75,8 +67,11 @@ var 锁定:bool=false:
 		if a:velocity=Vector2.ZERO
 
 func 切换职业(a:职业):
+	if 当前职业:当前职业.切换(a)
+	else :a._切入()
 	当前职业=a
 	鼠标左键.技能_图标=a.普攻_图标
+	
 
 var 禁用输入=false
 @onready var 鼠标左键 = $CanvasLayer/右下/鼠标左键
@@ -156,8 +151,6 @@ func 闪现():
 	金身_取消("闪现")
 	模式=空
 	鼠标右键.冷却()
-	#可_闪现=false
-	print(可_闪现)
 
 
 func _on_move_gravity_by_input_转向() -> void:
